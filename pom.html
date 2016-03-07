@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<style>
+    body {
+        background-color: darkslategray;
+    }
+    .view {
+        padding: 0;
+        margin: auto;
+        display: block;
+    }
+    .zone {
+        display: none;
+    }
+</style>
+
+<head>
+</head>
+
+<body onload="POM.init()">
+    <!-- main and work canvases -->
+    <canvas id="mainView" class="view" width="576" height="576"></canvas>
+    <canvas id="workView" class="zone" width="576" height="576"></canvas>
+    
+    <!-- title scene -->
+    <canvas id="initZone" class="zone" width="576" height="576"></canvas>
+    
+    <!-- loading scene -->
+    <canvas id="loadZone" class="zone" width="576" height="576"></canvas>
+    
+    <!-- gameplay scene -->
+    <canvas id="playZone" class="zone" width="576" height="576"></canvas>
+    <canvas id="textZone" class="zone" width="576" height="576"></canvas>
+    <canvas id="mmapZone" class="zone" width="576" height="576"></canvas>
+    <canvas id="gearZone" class="zone" width="576" height="576"></canvas>
+    
+</body>
+    <script src="POM.js"></script>
+</html>

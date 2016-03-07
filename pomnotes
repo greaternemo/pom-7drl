@@ -1,0 +1,34 @@
+Shit that still needs to be done:
+
+Fill out base objects for:
+    Mob types
+    Sprite types?
+    
+
+
+
+
+
+
+POM
+    ViewEngine
+    ActEngine
+    GameEngine
+    
+    Scheduler
+    
+    View
+        Scene
+            
+    
+    Mob
+    
+    
+    Floor
+        Room
+            Tile
+
+    Sheet
+        
+    BASE
+    Util
