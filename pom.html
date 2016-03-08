@@ -18,6 +18,13 @@
 </head>
 
 <body onload="POM.init()">
+    
+    <!-- all the images I need -->
+    <img id="envSphere" class="zone" src="POM/img/pom_env_sphere.png" width="192" height="32">
+    <img id="envLimbo" class="zone" src="POM/img/pom_env_limbo.png" width="192" height="32">
+    <img id="envAscent" class="zone" src="POM/img/pom_env_ascent.png" width="192" height="32">
+    <img id="playMobs" class="zone" src="POM/img/pom_play_mobs.png" width="256" height="32">
+
     <!-- main and work canvases -->
     <canvas id="mainView" class="view" width="576" height="576"></canvas>
     <canvas id="workView" class="zone" width="576" height="576"></canvas>
@@ -29,11 +36,14 @@
     <canvas id="loadZone" class="zone" width="576" height="576"></canvas>
     
     <!-- gameplay scene -->
-    <canvas id="playZone" class="zone" width="576" height="576"></canvas>
-    <canvas id="textZone" class="zone" width="576" height="576"></canvas>
-    <canvas id="mmapZone" class="zone" width="576" height="576"></canvas>
-    <canvas id="gearZone" class="zone" width="576" height="576"></canvas>
+    <canvas id="playZone" class="zone" width="416" height="416"></canvas>
+    <canvas id="textZone" class="zone" width="576" height="160"></canvas>
+    <canvas id="mmapZone" class="zone" width="160" height="160"></canvas>
+    <canvas id="gearZone" class="zone" width="160" height="256"></canvas>
     
 </body>
     <script src="POM.js"></script>
+    <script src="POM/BASE.js"></script>
+    <script src="POM/Mob.js"></script>
+    <script src="POM/Sprite.js"></script>
 </html>
