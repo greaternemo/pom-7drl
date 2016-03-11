@@ -8,6 +8,7 @@ POM.ActEngine = function(params) {
 }
 
 POM.ActEngine.prototype.handleTurn = function(actor) {
+    this.actingMob = actor;
     this.compel(actor);
     // do cleanup stuff here? idk
 };

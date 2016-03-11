@@ -1,3 +1,0 @@
-// POM.Point
-
-POM.

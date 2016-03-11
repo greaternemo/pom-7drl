@@ -3,6 +3,8 @@
 POM.BASE = {
     
     dirs: {
+        four: ['N', 'E', 'S', 'W'],
+        eight: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'],
         codes: {
             ArrowUp: 'N',
             ArrowRight: 'E',
@@ -19,7 +21,72 @@ POM.BASE = {
             W:  {x: -1, y:  0},
             NW: {x: -1, y: -1},
         },
+        pairs: {
+            N: 'S',
+            E: 'W',
+            S: 'N',
+            W: 'E',
+        },
         
+    },
+    
+    floor: {
+        nsOffset: 14,
+        ewOffset: 14,
+        nWidth: 5,
+        nHeight: 5,
+    },
+    
+    room: {
+        tWidth: 13,
+        tHeight: 13,
+        sides: {
+            N: {x:  6, y:  0},
+            E: {x: 12, y:  6},
+            S: {x:  6, y: 12},
+            W: {x:  0, y:  6},
+        },
+        // When you leave a room, you appear just outside the doorway in the next room
+        // This is to create the illusion of shared walls between rooms
+        exits: {
+            N: {x:  6, y: 11, xd:  6, yd: 12},
+            E: {x:  1, y:  6, xd:  0, yd:  6},
+            S: {x:  6, y:  1, xd:  6, yd:  0},
+            W: {x: 11, y:  6, xd: 12, yd:  6},
+        },
+        layout: [
+            "vWall,vWall,vWall,vWall,vWall,vWall,vDoor,vWall,vWall,vWall,vWall,vWall,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hDoor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hDoor",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "vWall,vWall,vWall,vWall,vWall,vWall,vDoor,vWall,vWall,vWall,vWall,vWall,hWall",
+        ],
+    },
+    
+    colors: {
+        void: "black",
+        active: "white",
+        known: "gray",
+        wall: "black",
+        open: "white",
+        door: "gray",
+    },
+    
+    views: {
+        main: {
+            canvas: null,
+        },
+        work: {
+            canvas: null,
+        }
     },
             
     sheets: {
@@ -71,7 +138,7 @@ POM.BASE = {
             }
         },
         font: {
-            sWidth: 16,
+            sWidth: 9,
             sHeight: 16,
             rows:  [
                 "digit",
@@ -92,6 +159,48 @@ POM.BASE = {
         },
     },
     
+    mobs: {
+        avatarA: {
+            kind: 'avatarA',
+            class: 'sinner',
+            agent: 'player',
+            health: 5,
+            damage: 1,
+            turnWait: 0,
+            turnSpeed: 15,
+            items: {
+                slotA: null,
+                slotB: null,
+            },
+        },
+        avatarB: {
+            kind: 'avatarB',
+            class: 'sinner',
+            agent: 'player',
+            health: 5,
+            damage: 1,
+            turnWait: 0,
+            turnSpeed: 15,
+            items: {
+                slotA: null,
+                slotB: null,
+            },
+        },
+        zombie: {
+            kind: 'zombie',
+            class: 'zombie',
+            agent: 'zombie',
+            health: 1,
+            damage: 1,
+            turnWait: 0,
+            turnSpeed: 15,
+            items: {
+                slotA: null,
+                slotB: 'unable',
+            },
+        },
+    },
+    
     sprites: {
         env: {},
         play: {
@@ -99,7 +208,62 @@ POM.BASE = {
             items: {},
         },
         font: {},
-    }
+    },
+    
+    scenes: {
+        title: {
+            logo: null,
+            menu: null,
+            loading: null,
+            credits: null,
+        },
+        game: {
+            playArea: null,
+            textLog: null,
+            miniMap: null,
+            statPane: null,
+        },
+    },
+    
+    zones: {
+        logo: {
+            canvas: null,
+        },
+        menu: {
+            canvas: null,
+        },
+        loading: {
+            canvas: null,
+        },
+        credits: {
+            canvas: null,
+        },
+        playArea: {
+            canvas: null,
+        },
+        textLog: {
+            canvas: null,
+        },
+        miniMap: {
+            canvas: null,
+            origins: {
+                N: {x: 12, y:  0, w: 8, h: 4},
+                E: {x: 28, y: 12, w: 4, h: 8},
+                S: {x: 12, y: 28, w: 8, h: 4},
+                W: {x: 0, y:  12, w: 4, h: 8},
+                room: {x: 4, y: 4, w: 24, h: 24},
+            },
+        },
+        statPane: {
+            canvas: null,
+        },
+    },
+    
+    agents: {
+        
+    },
+    
+    
 };
 
 POM.BASE.init = function() {
@@ -110,6 +274,18 @@ POM.BASE.init = function() {
     var dy;
     var dw;
     var dh;
+    
+    // Views
+    
+    POM.BASE.views.main.canvas = document.getElementById("mainView");
+    POM.BASE.views.work.canvas = document.getElementById("workView");
+    
+    // Zones
+    
+    POM.BASE.zones.playArea.canvas = document.getElementById("playZone");
+    POM.BASE.zones.textLog.canvas = document.getElementById("textZone");
+    POM.BASE.zones.miniMap.canvas = document.getElementById("miniZone");
+    POM.BASE.zones.statPane.canvas = document.getElementById("statZone");
     
     // Spritesheets
     
@@ -165,32 +341,6 @@ POM.BASE.init = function() {
     
 /*    
     
-    mobs: {
-        man: {
-            kind: 'man',
-            class: 'sinner',
-            agent: 'player',
-            health: 5,
-            damage: 1,
-            turnWait: 0,
-            turnSpeed: 15,
-            items: {
-                slotA: null,
-                slotB: null,
-            },
-        },
-        zombie: {
-            kind: 'zombie',
-            class: 'zombie',
-            agent: 'zombie',
-            health: 1,
-            damage: 1,
-            turnWait: 0,
-            turnSpeed: 15,
-            items: {},
-        },
-    },
-    
     items: {
         orb: {
             kind: 'orb',
@@ -229,17 +379,5 @@ POM.BASE.init = function() {
         },
     },
     
-    canvases: [
-        'mainView',
-        'workView',
-        'initZone',
-        'loadZone',
-        'playZone',
-        'textZone',
-        'mmapZone',
-        'gearZone'
-    ],
-
-
 
 }*/
