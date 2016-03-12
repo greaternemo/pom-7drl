@@ -10,6 +10,10 @@ POM.Room = function(params) {
     this.active = false;
     this.deadEnd = false;
     
+    // local lists of items and mobs for drawing
+    this.itemList = [];
+    this.mobList = [];
+    
     // state of the room for minimap
     // for a void room, this.known should be 'void'
     // for the active room, it should be 'active'
@@ -39,10 +43,14 @@ POM.Room.prototype.init = function(params) {
     this.nodeY = params.nodeY;
     this.tWidth = POM.BASE.room.tWidth;
     this.tHeight = POM.BASE.room.tHeight;
+    this.sheet = POM.BASE.room.sheet;
 };
 
 POM.Room.prototype.generate = function(params) {
     this.tileMap = [];
+    if (params) {
+        this.sheet = params.sheet;
+    }
     var dx = null;
     var dy = null;
     var tempArray = [];

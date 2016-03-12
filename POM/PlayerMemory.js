@@ -45,6 +45,9 @@ POM.PlayerMemory.prototype.forget = function(room) {
     // bye felicia
     var fx = room.nodeX;
     var fy = room.nodeY;
+    if (this.floor.deadEnd == this.floor.nodeMap[fx][fy]) {
+        this.floor.deadEnd = false;
+    }
     this.floor.nodeMap[fx][fy] = new POM.Room({
         nodeX: fx,
         nodeY: fy,

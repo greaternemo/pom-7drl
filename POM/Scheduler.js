@@ -2,8 +2,17 @@
 
 POM.Scheduler = function(params) {
     this.counter = 0;
-    this.mobList = params.mobList;
+    this.mobList = null;
     this.nextMob = false;
+}
+
+POM.Scheduler.prototype.registerMobList = function(mobList) {
+    this.mobList = mobList;
+};
+
+// this is called when mobs die, obv
+POM.Scheduler.prototype.mourn = function() {
+    this.counter -= 1;
 }
 
 POM.Scheduler.prototype.nextTurn = function() {

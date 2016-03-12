@@ -31,13 +31,12 @@ POM.BASE = {
     },
     
     floor: {
-        nsOffset: 14,
-        ewOffset: 14,
         nWidth: 5,
         nHeight: 5,
     },
     
     room: {
+        sheet: null,
         tWidth: 13,
         tHeight: 13,
         sides: {
@@ -53,6 +52,24 @@ POM.BASE = {
             E: {x:  1, y:  6, xd:  0, yd:  6},
             S: {x:  6, y:  1, xd:  6, yd:  0},
             W: {x: 11, y:  6, xd: 12, yd:  6},
+        },
+        facings: {
+            N: {
+                wall: 'hWall',
+                door: 'hDoor',
+            },
+            E: {
+                wall: 'vWall',
+                door: 'vDoor',
+            },
+            S: {
+                wall: 'hWall',
+                door: 'hDoor',
+            },
+            W: {
+                wall: 'vWall',
+                door: 'vDoor',
+            },
         },
         layout: [
             "vWall,vWall,vWall,vWall,vWall,vWall,vDoor,vWall,vWall,vWall,vWall,vWall,hWall",
@@ -81,6 +98,8 @@ POM.BASE = {
     },
     
     views: {
+        intv: (1000/15),
+        fader: 0.125,
         main: {
             canvas: null,
         },
@@ -125,14 +144,14 @@ POM.BASE = {
                 sWidth: 32,
                 sHeight: 32,
                 cols: [
-                    "avatarA",
-                    "avatarB",
-                    "avatarC",
-                    "avatarD",
-                    "avatarE",
-                    "zombie",
-                    "spirit",
-                    "wraith"
+                    "no1",
+                    "no2",
+                    "no3",
+                    "no4",
+                    "no5",
+                    "no6",
+                    "no7",
+                    "orb"
                 ],
                 allItems: null,
             }
@@ -159,6 +178,36 @@ POM.BASE = {
         },
     },
     
+    player: {
+        // starting location and starting room
+        locX: 6,
+        locY: 6,
+        roomX: 2,
+        roomY: 2,
+        start: 'sphere',
+        journey: {
+            sphere: null,
+            limbo: null,
+            ascent: null,
+        },
+        classes: [
+            'wrath',
+            'envy',
+            'pride',
+            'lust',
+            'gluttony',
+            'sloth',
+            'greed'
+        ],
+        kinds: [
+            'avatarA',
+            'avatarB',
+            'avatarC',
+            'avatarD',
+            'avatarE',
+        ],
+    },
+    
     mobs: {
         avatarA: {
             kind: 'avatarA',
@@ -175,6 +224,45 @@ POM.BASE = {
         },
         avatarB: {
             kind: 'avatarB',
+            class: 'sinner',
+            agent: 'player',
+            health: 5,
+            damage: 1,
+            turnWait: 0,
+            turnSpeed: 15,
+            items: {
+                slotA: null,
+                slotB: null,
+            },
+        },
+        avatarC: {
+            kind: 'avatarC',
+            class: 'sinner',
+            agent: 'player',
+            health: 5,
+            damage: 1,
+            turnWait: 0,
+            turnSpeed: 15,
+            items: {
+                slotA: null,
+                slotB: null,
+            },
+        },
+        avatarD: {
+            kind: 'avatarD',
+            class: 'sinner',
+            agent: 'player',
+            health: 5,
+            damage: 1,
+            turnWait: 0,
+            turnSpeed: 15,
+            items: {
+                slotA: null,
+                slotB: null,
+            },
+        },
+        avatarE: {
+            kind: 'avatarE',
             class: 'sinner',
             agent: 'player',
             health: 5,
@@ -217,12 +305,12 @@ POM.BASE = {
             loading: null,
             credits: null,
         },
-        game: {
-            playArea: null,
-            textLog: null,
-            miniMap: null,
-            statPane: null,
-        },
+        game: [
+            'playArea',
+            'textLog',
+            'miniMap',
+            'statPane'
+        ],
     },
     
     zones: {
@@ -240,12 +328,33 @@ POM.BASE = {
         },
         playArea: {
             canvas: null,
+            sheet: null,
+            originX: 0,
+            originY: 160,
+            sWidth: 32,
+            sHeight: 32,
+            nWidth: 13,
+            nHeight: 13,
         },
         textLog: {
             canvas: null,
+            sheet: null,
+            originX: 0,
+            originY: 0,
+            sWidth: 9,
+            sHeight: 16,
+            nWidth: 64,
+            nHeight: 10,
         },
         miniMap: {
             canvas: null,
+            sheet: null,
+            originX: 416,
+            originY: 160,
+            sWidth: 32,
+            sHeight: 32,
+            nWidth: 5,
+            nHeight: 5,
             origins: {
                 N: {x: 12, y:  0, w: 8, h: 4},
                 E: {x: 28, y: 12, w: 4, h: 8},
@@ -258,11 +367,7 @@ POM.BASE = {
             canvas: null,
         },
     },
-    
-    agents: {
         
-    },
-    
     
 };
 
@@ -292,10 +397,16 @@ POM.BASE.init = function() {
     POM.BASE.sheets.env.sphere = document.getElementById("envSphere");
     POM.BASE.sheets.env.limbo = document.getElementById("envLimbo");
     POM.BASE.sheets.env.ascent = document.getElementById("envAscent");
+    POM.BASE.room.sheet = POM.BASE.sheets.env.sphere;
+    POM.BASE.player.journey.sphere = POM.BASE.sheets.env.sphere;
+    POM.BASE.player.journey.limbo = POM.BASE.sheets.env.limbo;
+    POM.BASE.player.journey.ascent = POM.BASE.sheets.env.ascent;
     
     POM.BASE.sheets.play.mobs.allMobs = document.getElementById("playMobs");
+    POM.BASE.sheets.play.mobs.allItems = document.getElementById("playItems");
     
     POM.BASE.sheets.font.face = document.getElementById("fontFace");
+    POM.BASE.zones.textLog.sheet = POM.BASE.sheets.font.face;
     
     // FOR THE LOVE OF GOD, WAIT UNTIL YOUR IMAGES LOAD, BRUH
         

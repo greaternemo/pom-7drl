@@ -1,21 +1,26 @@
 // POM.Floor
 
 POM.Floor = function(params) {
-    this.nsOffset = null;
-    this.ewOffset = null;
     this.nWidth = null;
     this.nHeight = null;
-    this.deadEnd = false;
     this.nodeMap = [];
+    
+    this.active = false;
+    this.activeSheet = null;
+    this.deadEnd = false;
+    
+    this.BR = POM.BASE.room;
+    this.BD = POM.BASE.dirs;
     
     this.init(params);
 }
 
 POM.Floor.prototype.init = function(params) {
-    this.nsOffset = params.nsOffset;
-    this.ewOffset = params.ewOffset;
-    this.nWidth = params.nWidth;
-    this.nHeight = params.nHeight;
+    this.nWidth = POM.BASE.floor.nWidth;
+    this.nHeight = POM.BASE.floor.nHeight;
+    
+    // as a placeholder so nothing breaks, jesus
+    this.activeSheet = POM.BASE.sheets.env.sphere;
     
     var dx = null;
     var dy = null;
@@ -37,8 +42,8 @@ POM.Floor.prototype.getNextRoom = function(params) {
     var ny = params.nodeY;
     var mDir = params.mDir;
     
-    var ndx = nx + POM.BASE.dirs.deltas[mDir].x;
-    var ndy = ny + POM.BASE.dirs.deltas[mDir].y;
+    var ndx = nx + this.BD.deltas[mDir].x;
+    var ndy = ny + this.BD.deltas[mDir].y;
     switch (mDir) {
         case "N":
             if (ndy < 0) { ndy += this.nHeight }
@@ -55,14 +60,25 @@ POM.Floor.prototype.getNextRoom = function(params) {
     }
     
     if (this.nodeMap[ndx][ndy].known == 'void') {
-        this.nodeMap[ndx][ndy].generate();
+        this.nodeMap[ndx][ndy].generate({
+            sheet: this.activeSheet
+        });
         this.renovate(this.nodeMap[ndx][ndy], mDir);
     }
     return this.nodeMap[ndx][ndy];
 };
 
+POM.Floor.prototype.getAdjacentRooms = function(room) {
+    
+};
+
 POM.Floor.prototype.renovate = function(room, dir) {
-    var outsides = {};
+    var outsides = {
+        N: null,
+        E: null,
+        S: null,
+        W: null,
+    };
     var dIndex = null;
     var nx = room.nodeX;
     var ny = room.nodeY;
@@ -71,62 +87,102 @@ POM.Floor.prototype.renovate = function(room, dir) {
     var sx = null;
     var sy = null;
     var aDir = null;
-    var nonDoors = 0;
+    var oDir = null;
+    var voidWalls = 0;
     var tileKind = null;
     
     // gotta check all the sides for doors and such
-    for (dIndex = 0; dIndex < POM.BASE.dirs.four.length; dIndex += 1) {
-        aDir = POM.BASE.dirs.four[dIndex];
-        dx = POM.BASE.dirs.deltas[aDir].x;
-        dy = POM.BASE.dirs.deltas[aDir].y;
+    for (dIndex = 0; dIndex < this.BD.four.length; dIndex += 1) {
+        POM.UTIL.zero([dx, dy, sx, sy]);
         
-        sx = nx + dx;
-        if (sx < 0) { sx += this.nWidth }
-        if (sx >= this.nWidth) { sx -= this.nWidth }
+        aDir = this.BD.four[dIndex];
+        oDir = this.BD.pairs[aDir];
+        
+        // just skip the room we came from, don't fuck with that one
+        if (dir != oDir) {
+            dx = this.BD.deltas[aDir].x;
+            dy = this.BD.deltas[aDir].y;
 
-        sy = ny + dy;
-        if (sy < 0) { sy += this.nHeight }
-        if (sx >= this.nHeight) { sy =- this.nHeight}
-        
-        outsides[aDir] = this.nodeMap[sx][sy].sides[aDir];
-        
-        if (outsides[aDir] == "wall") {
-            if (aDir == 'E' || aDir == 'W') {
-                tileKind = 'vWall';
-            }
-            else {
-                tileKind = 'hWall';
-            }
-            // if one side faces a wall, that side has to be a wall.
-            room.tileMap[POM.BASE.room.sides[aDir].x][POM.BASE.room.sides[aDir].y].morphInto(tileKind);
-            nonDoors += 1;
-        }
-        else if (outsides[aDir] == 'open') {
-            // well we can't have that now, can we?
-            if (aDir == 'E' || aDir == 'W') {
-                tileKind = 'vDoor';
-            }
-            else {
-                tileKind = 'hDoor';
-            }
-            this.nodeMap[sx][sy].tileMap[POM.BASE.room.exits[aDir].xd][POM.BASE.room.exits[aDir].yd].morphInto(tileKind);
-            if (tileKind == 'vDoor') {
-                this.nodeMap[sx][sy].tileMap[POM.BASE.room.exits[aDir].xd][POM.BASE.room.exits[aDir].yd - 1].morphInto('vWall');
-            }
-        }
-        else if (outsides[aDir] == 'void') {
-            // maybe this can be a wall.
-            if (POM.UTIL.rand(10) > 7) {
+            sx = nx + dx;
+            sy = ny + dy;
+
+                switch (aDir) {
+                    case "N":
+                        if (sy < 0) {
+                            sy += this.nHeight
+                        }
+                        break;
+                    case "E":
+                        if (sx >= this.nWidth) {
+                            sx -= this.nWidth
+                        }
+                        break;
+                    case "S":
+                        if (sy >= this.nHeight) {
+                            sy -= this.nHeight
+                        }
+                        break;
+                    case "W":
+                        if (sx < 0) {
+                            sx += this.nWidth
+                        }
+                        break;
+                }
+            outsides[aDir] = this.nodeMap[sx][sy].sides[oDir];
+
+            if (outsides[aDir] == "wall") {
                 if (aDir == 'E' || aDir == 'W') {
                     tileKind = 'vWall';
                 }
                 else {
                     tileKind = 'hWall';
                 }
-                room.tileMap[POM.BASE.room.sides[aDir].x][POM.BASE.room.sides[aDir].y].morphInto(tileKind);
+                // if one side faces a wall, that side has to be a wall.
+                room.tileMap[this.BR.sides[aDir].x][this.BR.sides[aDir].y].morphInto(tileKind);
+            }
+            else if (outsides[aDir] == 'open') {
+                // well we can't have that now, can we?
+                tileKind = this.BR.facings[oDir].door;
+
+                this.nodeMap[sx][sy].tileMap[this.BR.sides[oDir].x][this.BR.sides[oDir].y].morphInto(tileKind);
+                if (tileKind == 'vDoor') {
+                    this.nodeMap[sx][sy].tileMap[this.BR.sides[oDir].x][this.BR.sides[oDir].y - 1].morphInto('vWall');
+                }
+            }
+            else if (outsides[aDir] == 'void') {
+                // maybe this can be a wall.
+                if (POM.UTIL.rand(10) > 6) {
+                    tileKind = this.BR.facings[aDir].wall;
+                    // since this is a new room, we don't have to check for hWalls to change to vWalls
+                    room.tileMap[this.BR.sides[aDir].x][this.BR.sides[aDir].y].morphInto(tileKind);
+                    voidWalls += 1;
+                }
             }
         }
-        
+    }
+    
+    // cleanup
+    if (voidWalls == 3) {
+        // this is a dead end
+        // the cases where dead ends can generate are rare but significant
+        // voidWall tiles are the only ones we can revert to doors
+        // gotta keep the player moving, gotta maintain a path
+        if (this.deadEnd === false) {
+            // only allow one dead end at a time
+            this.deadEnd = room;
+        }
+        else {
+            // gotta bust it up
+            var reDoor = POM.UTIL.randUniqSetFromArray(this.BD.four, 2);
+            while (reDoor.length > 0) {
+                if (reDoor[0] != this.BD.pairs[dir]) {
+                    tileKind = this.BR.facings[reDoor[0]].door;
+                    room.tileMap[this.BR.sides[reDoor[0]].x][this.BR.sides[reDoor[0]].y].morphInto('tileKind');
+                    
+                }
+                reDoor.shift();
+            }
+        }
     }
 };
 
