@@ -13,6 +13,7 @@ POM.GameEngine = function(params) {
     this.activeRoom = null;
     this.activeRoomState = 'filthy';
     this.player = null;
+    this.playerState = 'filthy';
     
     this.itemList = [];
     this.mobList = [];

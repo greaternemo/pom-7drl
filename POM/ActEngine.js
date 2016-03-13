@@ -42,11 +42,14 @@ POM.ActEngine.prototype.controlPlayer = function(actor) {
     actor.handleEvent = function(pKey) {
         // fucking wait, okay
         window.removeEventListener("keydown", actor);
+                
         var GEng = POM.gameEngine;
         var GEAR = POM.gameEngine.activeRoom;
+        var VEng = POM.viewEngine;
         var BD = POM.BASE.dirs;
         var BR = POM.BASE.room;
-
+        var PC = GEng.player;
+        
         var oldLoc = {
             x: 0,
             y: 0
@@ -55,15 +58,38 @@ POM.ActEngine.prototype.controlPlayer = function(actor) {
             x: 0,
             y: 0
         };
+        var done = false;
+        var aFlag = false;
         var mFlag = false;
         var mDir = null;
         var dRoom = null;
         var outcome = null;
-
+        
         oldLoc.x += actor.locX;
         oldLoc.y += actor.locY;
-
-        if (BD.codes.hasOwnProperty(pKey.code)) {
+        
+        // if we're meditating, do that instead
+        if (PC.flags.indexOf('meditating') != -1) {
+            PC.waitLeft -= 1;
+            if (PC.waitLeft === 0) {
+                PC.flags.splice(PC.flags.indexOf('meditating'), 1);
+                GEng.logMessage('Your mind clears and your understanding grows.');
+                PC.rings.have.push(PC.rings.need.shift());
+                if (PC.mob.health < 5) {
+                    PC.mob.health += 1;
+                }
+            }
+            else {
+                GEng.logMessage('You continue to dwell on the mysteries of the orb.');
+            }
+            aFlag = true;
+        }
+        else if (BD.codes.hasOwnProperty(pKey.code)) {
+            
+            if (PC.flags.indexOf('confirmMeditation') != -1) {
+                // guess we're not meditating right now
+                PC.flags.splice(PC.flags.indexOf('confirmMeditation'), 1);
+            }
 
             mDir = BD.codes[pKey.code];
             // are we in a doorway trying to leave a room?
@@ -88,19 +114,13 @@ POM.ActEngine.prototype.controlPlayer = function(actor) {
                     }
                 }
 
-                //GEAR.active = false;
-                //GEAR.known = 'known';
                 actor.roomX = dRoom.nodeX;
                 actor.roomY = dRoom.nodeY;
                 GEng.player.memory.enterRoom({
-                //POM.playerMemory.enterRoom({
                     nodeX: dRoom.nodeX,
                     nodeY: dRoom.nodeY,
                 })
                 GEng.registerActiveRoom(dRoom);
-                //GEAR = dRoom;
-                //GEAR.active = true;
-                //GEAR.known = 'active';
                 // don't forget to move the player and unflag them as inDoor
                 actor.inDoor = false;
                 actor.locX = newLoc.x;
@@ -113,7 +133,6 @@ POM.ActEngine.prototype.controlPlayer = function(actor) {
                 newLoc.y += BD.deltas[BD.codes[pKey.code]].y;
                 actor.locX = 0;
                 actor.locY = 0;
-                // switch (POM.playZone.playMap[newLoc.x][newLoc.y].spr) {
                 switch (GEAR.tileMap[newLoc.x][newLoc.y].kind) {
                     case "floor":
                         outcome = "walk";
@@ -175,17 +194,49 @@ POM.ActEngine.prototype.controlPlayer = function(actor) {
             // need to build this out
             
         }
-        else {
-            // if we don't respond to a keypress, keep listening
-            window.addEventListener("keydown", actor);
+        else if (POM.BASE.actions.hasOwnProperty(pKey.code)) {
+            
+            switch (POM.BASE.actions[pKey.code]) {
+                case 'slotA':
+                    // try to use the item
+                    if (actor.items.slotA.kind == 'orb') {
+                        if (PC.flags.indexOf('confirmMeditation') == -1) {
+                            PC.flags.push('confirmMeditation');
+                            GEng.logMessage("Using this orb requires 10 turns of meditation.");
+                            GEng.logMessage("Press 'L' again to confirm meditation.");
+                        }
+                        else if (PC.flags.indexOf('confirmMeditation') != -1) {
+                            // guess we're meditating right now
+                            PC.flags.splice(PC.flags.indexOf('confirmMeditation'), 1);
+                            GEng.logMessage("You fall into a deep trance and begin to meditate.");
+                            PC.flags.push('meditating');
+                            PC.waitLeft = 10;
+                            aFlag === true;
+                            PC.mob.items.slotA = null;
+                        }
+                    }
+            }
         }
+
+        VEng.drawFrame();
         
         if (mFlag === true) {
             GEng.activeRoomState = 'filthy';
+            done = true;
         }
-            
-            
-        GEng.start();
+        
+        if (aFlag === true) {
+            done = true;
+        }
+        
+        if (done === true) {
+            GEng.start();
+        }
+        else {
+            VEng.drawFrame();
+            // if we don't respond to a keypress, keep listening
+            window.addEventListener("keydown", actor);
+        }
     }
     // END actor.handleEvent declaration
 
@@ -200,4 +251,13 @@ POM.ActEngine.prototype.wanderAbout = function(actor) {
     
 };
 
-//POM.ActEngine.prototype.
+POM.ActEngine.prototype.pursueThing = function(actor) {};
+
+
+
+
+
+
+
+
+

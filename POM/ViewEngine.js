@@ -90,7 +90,8 @@ POM.ViewEngine.prototype.fadeIn = function() {
     if (this.alpha == 1) {
         // continue
         clearTimeout(this.repeat);
-        this.GEng.start();
+        // pretty sure this is what's making it recurse
+        //this.GEng.start();
     } else {
         this.repeat = setTimeout(this.fadeIn.bind(this), this.intv);
     }

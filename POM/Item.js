@@ -14,6 +14,6 @@ POM.Item.prototype.init = function(params) {
     this.kind = params.kind;
     this.sprite = POM.BASE.sprites.play.items[this.kind];
     //probably do something with this ok
-    this.sheet = null;
+    this.sheet = POM.BASE.sheets.play.items.allItems;
     
 }

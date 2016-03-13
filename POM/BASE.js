@@ -30,6 +30,11 @@ POM.BASE = {
         
     },
     
+    actions: {
+        KeyL: 'slotA',
+        //KeyR: 'slotB',
+    },
+    
     floor: {
         nWidth: 5,
         nHeight: 5,
@@ -89,12 +94,18 @@ POM.BASE = {
     },
     
     colors: {
+        // primarily for minimap drawing
         void: "black",
         active: "white",
         known: "gray",
         wall: "black",
         open: "white",
         door: "gray",
+        
+        // primarily for *airquotes* "health meter"
+        hurt: 'black',
+        fine: 'gray',
+        seen: 'white',
     },
     
     views: {
@@ -176,6 +187,61 @@ POM.BASE = {
             },
             face: null,
         },
+        stat: {
+            base: null,
+            prog: null,
+            // rings is a mess because the sprites are irregularly sized
+            // also prog is the sheet for rings
+            rings: {
+                kinds: ['sphere', 'limbo', 'ascent'],
+                pieces: {
+                    sphere: ['s1', 's2', 's3'],
+                    limbo: ['l1', 'l2', 'l3', 'l4', 'l5'],
+                    ascent: ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8'],
+                },
+                sphere: {
+                    s1: {w: 25, h: 11, x: 0, y: 0},
+                    s2: {w: 13, h: 21, x: 0, y: 11},
+                    s3: {w: 15, h: 20, x: 13, y: 11},
+                },
+                limbo: {
+                    l1: {w: 45, h: 23, x: 28, y: 0},
+                    l2: {w: 19, h: 35, x: 0, y: 32},
+                    l3: {w: 35, h: 27, x: 73, y: 0},
+                    l4: {w: 35, h: 28, x: 42, y: 27},
+                    l5: {w: 23, h: 37, x: 19, y: 32},
+                },
+                ascent: {
+                    a1: {w: 47, h: 21, x: 108, y: 0},
+                    a2: {w: 40, h: 42, x: 159, y: 0},
+                    a3: {w: 20, h: 44, x: 96, y: 42},
+                    a4: {w: 33, h: 37, x: 135, y: 42},
+                    a5: {w: 51, h: 21, x: 108, y: 21},
+                    a6: {w: 31, h: 31, x: 168, y: 42},
+                    a7: {w: 19, h: 47, x: 116, y: 42},
+                    a8: {w: 37, h: 34, x: 59, y: 55},
+                },
+                locs: {
+                    s1: {w: 25, h: 11, x: 0, y: 0},
+                    s2: {w: 13, h: 21, x: 0, y: 11},
+                    s3: {w: 15, h: 20, x: 13, y: 11},
+                    l1: {w: 45, h: 23, x: 28, y: 0},
+                    l2: {w: 19, h: 35, x: 0, y: 32},
+                    l3: {w: 35, h: 27, x: 73, y: 0},
+                    l4: {w: 35, h: 28, x: 42, y: 27},
+                    l5: {w: 23, h: 37, x: 19, y: 32},
+                    a1: {w: 47, h: 21, x: 108, y: 0},
+                    a2: {w: 40, h: 42, x: 159, y: 0},
+                    a3: {w: 20, h: 44, x: 96, y: 42},
+                    a4: {w: 33, h: 37, x: 135, y: 42},
+                    a5: {w: 51, h: 21, x: 108, y: 21},
+                    a6: {w: 31, h: 31, x: 168, y: 42},
+                    a7: {w: 19, h: 47, x: 116, y: 42},
+                    a8: {w: 37, h: 34, x: 59, y: 55},
+                },
+            },
+            
+        },
     },
     
     player: {
@@ -199,7 +265,7 @@ POM.BASE = {
             'sloth',
             'greed'
         ],
-        kinds: [
+        avatars: [
             'avatarA',
             'avatarB',
             'avatarC',
@@ -209,59 +275,7 @@ POM.BASE = {
     },
     
     mobs: {
-        avatarA: {
-            kind: 'avatarA',
-            class: 'sinner',
-            agent: 'player',
-            health: 5,
-            damage: 1,
-            turnWait: 0,
-            turnSpeed: 15,
-            items: {
-                slotA: null,
-                slotB: null,
-            },
-        },
-        avatarB: {
-            kind: 'avatarB',
-            class: 'sinner',
-            agent: 'player',
-            health: 5,
-            damage: 1,
-            turnWait: 0,
-            turnSpeed: 15,
-            items: {
-                slotA: null,
-                slotB: null,
-            },
-        },
-        avatarC: {
-            kind: 'avatarC',
-            class: 'sinner',
-            agent: 'player',
-            health: 5,
-            damage: 1,
-            turnWait: 0,
-            turnSpeed: 15,
-            items: {
-                slotA: null,
-                slotB: null,
-            },
-        },
-        avatarD: {
-            kind: 'avatarD',
-            class: 'sinner',
-            agent: 'player',
-            health: 5,
-            damage: 1,
-            turnWait: 0,
-            turnSpeed: 15,
-            items: {
-                slotA: null,
-                slotB: null,
-            },
-        },
-        avatarE: {
+        player: {
             kind: 'avatarE',
             class: 'sinner',
             agent: 'player',
@@ -296,6 +310,9 @@ POM.BASE = {
             items: {},
         },
         font: {},
+        stat: {
+            rings: {},
+        },
     },
     
     scenes: {
@@ -365,6 +382,51 @@ POM.BASE = {
         },
         statPane: {
             canvas: null,
+            sheet: null,
+            originX: 416,
+            originY: 320,
+            sWidth: 32,
+            sHeight: 32,
+            nWidth: 5,
+            nHeight: 8,
+            origins: {
+                items: {
+                    L: {x:  60, y: 200},
+                    R: {x: 108, y: 200},
+                },
+                memory: {
+                    locs: ['mem0', 'mem1', 'mem2', 'mem3', 'mem4'],
+                    mem0: {w: 28, h: 4, x:   2, y: 6,},
+                    mem1: {w: 28, h: 4, x:  33, y: 6,},
+                    mem2: {w: 28, h: 4, x:  64, y: 6,},
+                    mem3: {w: 28, h: 4, x:  95, y: 6,},
+                    mem4: {w: 28, h: 4, x: 126, y: 6,},
+                },
+                rings: {
+                    //sphere: {
+                        s1: {x: 66, y: 88},
+                        s2: {x: 62, y: 98},
+                        s3: {x: 79, y: 99},
+                    //},
+                    //limbo: {
+                        l1: {x: 58, y: 120},
+                        l2: {x: 99, y: 91},
+                        l3: {x: 80, y: 63},
+                        l4: {x: 42, y: 63},
+                        l5: {x: 38, y: 92},
+                    //},
+                    //ascent: {
+                        a1: {x: 50, y: 39},
+                        a2: {x: 97, y: 44},
+                        a3: {x: 122, y: 83},
+                        a4: {x: 99, y: 125},
+                        a5: {x: 51, y: 146},
+                        s6: {x: 22, y: 127},
+                        a7: {x: 14, y: 84},
+                        a8: {x: 18, y: 50},
+                    //},
+                },
+            },
         },
     },
         
@@ -379,6 +441,7 @@ POM.BASE.init = function() {
     var dy;
     var dw;
     var dh;
+    var temp;
     
     // Views
     
@@ -403,10 +466,14 @@ POM.BASE.init = function() {
     POM.BASE.player.journey.ascent = POM.BASE.sheets.env.ascent;
     
     POM.BASE.sheets.play.mobs.allMobs = document.getElementById("playMobs");
-    POM.BASE.sheets.play.mobs.allItems = document.getElementById("playItems");
+    POM.BASE.sheets.play.items.allItems = document.getElementById("playItems");
     
     POM.BASE.sheets.font.face = document.getElementById("fontFace");
     POM.BASE.zones.textLog.sheet = POM.BASE.sheets.font.face;
+    
+    POM.BASE.sheets.stat.base = document.getElementById("statBase");
+    POM.BASE.sheets.stat.prog = document.getElementById("progRings");
+    
     
     // FOR THE LOVE OF GOD, WAIT UNTIL YOUR IMAGES LOAD, BRUH
         
@@ -432,6 +499,17 @@ POM.BASE.init = function() {
             kind: POM.BASE.sheets.play.mobs.cols[dx],
         });
     }
+    
+    // POM.BASE.sheets.play.items - POM.BASE.sprites.play.items
+    for (dx = 0; dx < POM.BASE.sheets.play.items.cols.length; dx += 1) {
+        POM.BASE.sprites.play.items[POM.BASE.sheets.play.items.cols[dx]] = new POM.Sprite ({
+            width: POM.BASE.sheets.play.items.sWidth,
+            height: POM.BASE.sheets.play.items.sHeight,
+            sheetX: (POM.BASE.sheets.play.items.sWidth * dx),
+            sheetY: 0,
+            kind: POM.BASE.sheets.play.items.cols[dx],
+        });
+    }
 
     // POM.BASE.sheets.font - POM.BASE.sprites.font
     for (dy = 0; dy < POM.BASE.sheets.font.rows.length; dy += 1) {
@@ -446,7 +524,19 @@ POM.BASE.init = function() {
         }
     }
     
-    
+    temp = POM.BASE.sheets.stat;
+    // POM.BASE.sheets.stat.prog - POM.BASE.sprites.stat.rings
+    for (dx = 0; dx < temp.rings.kinds.length; dx += 1) {
+        for (dy = 0; dy < temp.rings.pieces[temp.rings.kinds[dx]].length; dy += 1) {
+            POM.BASE.sprites.stat.rings[temp.rings.pieces[temp.rings.kinds[dx]][dy]] = new POM.Sprite ({
+                width: temp.rings[temp.rings.kinds[dx]][temp.rings.pieces[temp.rings.kinds[dx]][dy]].w,
+                height: temp.rings[temp.rings.kinds[dx]][temp.rings.pieces[temp.rings.kinds[dx]][dy]].h,
+                sheetX: temp.rings[temp.rings.kinds[dx]][temp.rings.pieces[temp.rings.kinds[dx]][dy]].x,
+                sheetY: temp.rings[temp.rings.kinds[dx]][temp.rings.pieces[temp.rings.kinds[dx]][dy]].y,
+                kind: temp.rings.pieces[temp.rings.kinds[dx]][dy],
+            })
+        }
+    }
     
 }
     

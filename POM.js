@@ -48,6 +48,9 @@ POM.init = function() {
     
     POM.gameEngine.activeFloor.nodeMap[2][2].generate();
     POM.gameEngine.registerActiveRoom(POM.gameEngine.activeFloor.nodeMap[2][2]);
+	
+	POM.gameEngine.registerPlayer();
+	POM.gameEngine.player.mob.items.slotA = new POM.Item({ kind: 'orb'})
     	
 	POM.viewEngine.activeScene.registerZone(new POM.Zone('playArea'));
 	temp = POM.BASE.scenes.game.indexOf('playArea');
@@ -77,7 +80,11 @@ POM.init = function() {
 		'dirty', function() { return POM.gameEngine.activeFloorState }
 	);
 	
-	POM.gameEngine.registerPlayer();
+	POM.viewEngine.activeScene.registerZone(new POM.Zone('statPane'));
+	temp = POM.BASE.scenes.game.indexOf('statPane');
+	POM.viewEngine.activeScene.zones[temp].linkStates(
+		'dirty', function() { return POM.gameEngine.playerState }
+	);
     
     POM.viewEngine.drawFrame();
 	POM.gameEngine.start();

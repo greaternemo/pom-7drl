@@ -225,6 +225,87 @@ POM.Scene.prototype.composeMiniZone = function(zone) {
     return 'cleaned';
 };
 
-POM.Scene.prototype.composeStatZone = function() {
+POM.Scene.prototype.composeStatZone = function(zone) {
     
+    var PC = null;
+    var dx = null;
+    var dy = null;
+    var temp = null;
+    var BSH = POM.BASE.sheets;
+    var BZSPO = POM.BASE.zones.statPane.origins;
+    if (this.GEng.player != null) {
+        PC = this.GEng.player;
+        
+        zone.dd.drawImage(BSH.stat.base,
+                          0, 0,
+                          BSH.stat.base.width, BSH.stat.base.height,
+                          0, 0,
+                          BSH.stat.base.width, BSH.stat.base.height
+                         );
+
+        // draw the player's items if they have any
+        if (PC.mob.items.slotA != null) {
+            zone.dd.drawImage(BSH.play.items.allItems,
+                              PC.mob.items.slotA.sprite.sheetX, PC.mob.items.slotA.sprite.sheetY,
+                              PC.mob.items.slotA.sprite.width, PC.mob.items.slotA.sprite.height,
+                              BZSPO.items.L.x, BZSPO.items.L.y,
+                              PC.mob.items.slotA.sprite.width, PC.mob.items.slotA.sprite.height
+                             );
+        }
+        if (PC.mob.items.slotB != null) {
+            zone.dd.drawImage(BSH.play.items.allItems,
+                              PC.mob.items.slotB.sprite.sheetX, PC.mob.items.slotB.sprite.sheetY,
+                              PC.mob.items.slotB.sprite.width, PC.mob.items.slotB.sprite.height,
+                              BZSPO.items.R.x, BZSPO.items.L.y,
+                              PC.mob.items.slotB.sprite.width, PC.mob.items.slotB.sprite.height
+                             );
+        }
+        
+        
+        // draw the player's rings if they have any
+        if (PC.rings.have.length > 0) {
+            for (dx = 0; dx < PC.rings.have.length; dx += 1) {                
+                zone.dd.drawImage(BSH.stat.prog,
+                                  BSH.stat.rings.locs[PC.rings.have[dx]].x,
+                                  BSH.stat.rings.locs[PC.rings.have[dx]].y,
+                                  BSH.stat.rings.locs[PC.rings.have[dx]].w,
+                                  BSH.stat.rings.locs[PC.rings.have[dx]].h,
+                                  BZSPO.rings[PC.rings.have[dx]].x,
+                                  BZSPO.rings[PC.rings.have[dx]].y,
+                                  BSH.stat.rings.locs[PC.rings.have[dx]].w,
+                                  BSH.stat.rings.locs[PC.rings.have[dx]].h
+
+                );
+            }
+            // god i hope that works
+        }
+        
+        // draw the player's health
+        if (PC.mob.health > 0) {
+            for (dx = 0; dx < BZSPO.memory.locs.length; dx += 1) {
+                if ((PC.mob.health - 1) < dx) {
+                    // this one is hurt
+                    zone.dd.fillStyle = POM.BASE.colors.hurt;
+                }
+                else if (PC.mob.health >= dx) {
+                    if ((PC.memory.rooms.length - 1) < dx) {
+                        zone.dd.fillStyle = POM.BASE.colors.fine;
+                    }
+                    else {
+                        zone.dd.fillStyle = POM.BASE.colors.seen;
+                    }
+                }
+                zone.dd.fillRect(
+                    BZSPO.memory[BZSPO.memory.locs[dx]].x,
+                    BZSPO.memory[BZSPO.memory.locs[dx]].y,
+                    BZSPO.memory[BZSPO.memory.locs[dx]].w,
+                    BZSPO.memory[BZSPO.memory.locs[dx]].h
+                );
+            }
+        }
+    }
+    
+    
+    zone.dirty = 'filthy';
+    return 'cleaned';
 };

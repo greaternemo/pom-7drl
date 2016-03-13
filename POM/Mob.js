@@ -3,6 +3,7 @@
 POM.Mob = function(params) {
     this.kind = null;
     this.class = null;
+    this.avatar = null;
     this.sprite = null;
     this.agent = null;
     
@@ -28,7 +29,8 @@ POM.Mob = function(params) {
 POM.Mob.prototype.init = function(params) {
     this.kind = params.kind;
     this.class = POM.BASE.mobs[params.kind].class;
-    this.sprite = POM.BASE.sprites.play.mobs[params.kind];
+    this.avatar = params.avatar;
+    this.sprite = POM.BASE.sprites.play.mobs[params.avatar];
     this.agent = POM.BASE.mobs[params.kind].agent;
     
     this.damage = POM.BASE.mobs[params.kind].damage;
