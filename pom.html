@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<style>
+    body {
+        background-color: black;
+    }
+    .view {
+        padding: 0;
+        margin: auto;
+        display: block;
+    }
+    .zone {
+        display: none;
+    }
+</style>
+
+<head>
+</head>
+
+<body onload="POM.init()">
+    
+    <!-- all the images I need -->
+    <img id="envSphere" class="zone" src="POM/img/pom_env_sphere.png" width="192" height="32">
+    <img id="envLimbo" class="zone" src="POM/img/pom_env_limbo.png" width="192" height="32">
+    <img id="envAscent" class="zone" src="POM/img/pom_env_ascent.png" width="192" height="32">
+    <img id="playMobs" class="zone" src="POM/img/pom_play_mobs.png" width="256" height="32">
+    <img id="playItems" class="zone" src="POM/img/currentsheet.png" width="256" height="32">
+    <img id="fontFace" class="zone" src="POM/img/pom_font_mono.png" width="416" height="64">
+    <img id="statBase" class="zone" src="POM/img/pom_stat_base.png" width="160" height="256">
+    <img id="progRings" class="zone" src="POM/img/pom_prog_rings.png" width="199" height="89">
+
+    <!-- main and work canvases -->
+    <canvas id="mainView" class="view" width="576" height="576"></canvas>
+    <canvas id="workView" class="zone" width="576" height="576"></canvas>
+    
+    <!-- title scene -->
+    <canvas id="initZone" class="zone" width="576" height="576"></canvas>
+    <canvas id="loadZone" class="zone" width="576" height="576"></canvas>
+    
+    <!-- gameplay scene -->
+    <canvas id="playZone" class="zone" width="416" height="416"></canvas>
+    <canvas id="textZone" class="zone" width="576" height="160"></canvas>
+    <canvas id="miniZone" class="zone" width="160" height="160"></canvas>
+    <canvas id="statZone" class="zone" width="160" height="256"></canvas>
+    
+</body>
+    <script src="POM.js"></script>
+    <script src="POM/BASE.js"></script>
+    <script src="POM/UTIL.js"></script>
+    <script src="POM/Scheduler.js"></script>
+    <script src="POM/GameEngine.js"></script>
+    <script src="POM/ViewEngine.js"></script>
+    <script src="POM/ActEngine.js"></script>
+    <script src="POM/Player.js"></script>
+    <script src="POM/PlayerMemory.js"></script>
+    <script src="POM/View.js"></script>
+    <script src="POM/Scene.js"></script>
+    <script src="POM/Zone.js"></script>
+    <script src="POM/Floor.js"></script>
+    <script src="POM/Room.js"></script>
+    <script src="POM/Tile.js"></script>
+    <script src="POM/Mob.js"></script>
+    <script src="POM/Item.js"></script>
+    <script src="POM/Sprite.js"></script>
+</html>
