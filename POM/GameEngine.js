@@ -14,12 +14,15 @@ POM.GameEngine = function(params) {
     this.activeRoomState = 'filthy';
     this.player = null;
     this.playerState = 'filthy';
+    this.gameOver = false;
+    this.gameWon = false;
     
     this.itemList = [];
     this.mobList = [];
     
     // We are waiting by default since the game doesn't open directly to the game itself.
     this.waiting = true;
+    this.delay = null;
     this.actor = null;
 }
 
@@ -92,6 +95,46 @@ POM.GameEngine.prototype.updateMobLists = function() {
     }
 };
 
+// registerItem is used to place a new item on the floor of the dungeon
+POM.GameEngine.prototype.registerItem = function(item) {
+    this.itemList.push(item);
+    this.updateItemLists();
+};
+
+// destroyItem is used whenever an item is picked up or despawned
+POM.GameEngine.prototype.destroyItem = function(item) {
+    // rip in procgen
+    var tag = null;
+    var bag = null;
+    
+    tag = this.itemList.indexOf(item);
+    bag = this.itemList.splice(tag, 1);
+    
+    this.updateItemLists();
+};
+
+// updateItemLists clears and then regenerates all the local itemLists.
+// all items on the floor of the dungeon reside in the global itemList
+// and each room's local itemList holds the items on the floor of that room.
+POM.GameEngine.prototype.updateItemLists = function() {
+    var index = null;
+    var dx = null;
+    var dy = null;
+    
+    // first clear out all the local itemLists
+    for (dx = 0; dx < this.activeFloor.nWidth; dx += 1) {
+        for (dy = 0; dy < this.activeFloor.nHeight; dy += 1) {
+            this.activeFloor.nodeMap[dx][dy].itemList = [];
+        }
+    }
+    
+    for (index = 0; index < this.itemList.length; index += 1) {
+        dx = this.itemList[index].roomX;
+        dy = this.itemList[index].roomY;
+        this.activeFloor.nodeMap[dx][dy].itemList.push(this.itemList[index]);
+    }
+};
+
 POM.GameEngine.prototype.registerActiveFloor = function(floor) {
     if (this.activeFloor != null) {
         this.activeFloor.active = false;
@@ -110,6 +153,7 @@ POM.GameEngine.prototype.registerActiveRoom = function(room) {
     this.activeRoom.active = true;
     this.activeRoom.known = 'active';
     this.activeRoomState = 'filthy';
+    this.scheduler.registerActiveRoom(this.activeRoom);
     this.updateMobLists();
 };
 
@@ -119,8 +163,12 @@ POM.GameEngine.prototype.logMessage = function(msg) {
     this.msgLogState = 'filthy';
 };
 
+POM.GameEngine.prototype.playerDeath = function() {
+    this.gameOver = true;
+}
+
 POM.GameEngine.prototype.start = function() {
-    return this.on();
+    this.chill = setTimeout(this.on.bind(this), 50);
 };
 
 POM.GameEngine.prototype.stop = function() {
@@ -132,13 +180,25 @@ POM.GameEngine.prototype.on = function() {
         console.log("Tried to switch on GameEngine while it wasn't waiting");
     }
     
+    if (this.chill != null) {
+        clearTimeout(this.chill);
+        this.chill = null;
+    }
+    
     this.waiting = false;
     
     while (this.waiting === false) {
         this.actor = this.scheduler.nextTurn();
         this.AEng.handleTurn(this.actor);
-        this.VEng.drawFrame();
+        //this.VEng.drawFrame();
     }
+    //if (this.gameOver === true) {
+    //    this.vEng.animateDeath();
+    //    this.waiting = true;
+    //}
+    //if (this.gameWon === true) {
+    //    this.waiting = true;
+    //}
 };
 
 POM.GameEngine.prototype.off = function() {

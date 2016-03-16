@@ -50,8 +50,19 @@ POM.init = function() {
     POM.gameEngine.registerActiveRoom(POM.gameEngine.activeFloor.nodeMap[2][2]);
 	
 	POM.gameEngine.registerPlayer();
-	POM.gameEngine.player.mob.items.slotA = new POM.Item({ kind: 'orb'})
-    	
+	//POM.gameEngine.player.mob.items.slotA = new POM.Item({ kind: 'orb'})
+	
+	/*
+	POM.gameEngine.registerMob(new POM.Mob({
+		kind: 'zombie',
+		avatar: 'zombie',
+		roomX: 2,
+		roomY: 2,
+		locX: 11,
+		locY: 11,
+	}))
+    */
+	
 	POM.viewEngine.activeScene.registerZone(new POM.Zone('playArea'));
 	temp = POM.BASE.scenes.game.indexOf('playArea');
 	POM.viewEngine.activeScene.zones[temp].linkStates(
@@ -64,15 +75,21 @@ POM.init = function() {
 		'dirty', function() { return POM.gameEngine.msgLogState }
 	);
 
-    POM.gameEngine.logMessage("You can hear the cold.");
-    POM.gameEngine.logMessage("Your footsteps echo off the walls.");
-    POM.gameEngine.logMessage("A coat would be nice.");
-    POM.gameEngine.logMessage("You hear screaming in the distance.");
-    POM.gameEngine.logMessage("the quick brown fox jumps over the lazy dog.");
-    POM.gameEngine.logMessage("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.");
-    POM.gameEngine.logMessage("The Quick Brown Fox Jumps Over The Lazy Dog.");
-    POM.gameEngine.logMessage("The dog parries the fox's attack!");
-    POM.gameEngine.logMessage("The fox takes 83748920583610293847576 damage?");
+    
+	POM.gameEngine.logMessage(POM.UTIL.randUniqSetFromArray([
+		'You can hear the cold.',
+		'Your footsteps echo off the walls.',
+		'You can hear wind but you feel nothing.'
+	], 1));
+	//POM.gameEngine.logMessage("You can hear the cold.");
+    //POM.gameEngine.logMessage("Your footsteps echo off the walls.");
+    //POM.gameEngine.logMessage("A coat would be nice.");
+    //POM.gameEngine.logMessage("You hear screaming in the distance.");
+    //POM.gameEngine.logMessage("the quick brown fox jumps over the lazy dog.");
+    //POM.gameEngine.logMessage("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.");
+    //POM.gameEngine.logMessage("The Quick Brown Fox Jumps Over The Lazy Dog.");
+    //POM.gameEngine.logMessage("The dog parries the fox's attack!");
+    //POM.gameEngine.logMessage("The fox takes 83748920583610293847576 damage?");
     
 	POM.viewEngine.activeScene.registerZone(new POM.Zone('miniMap'));
 	temp = POM.BASE.scenes.game.indexOf('miniMap');

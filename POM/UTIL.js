@@ -62,3 +62,7 @@ POM.UTIL.zero = function(numArray) {
     })
 };
 
+POM.UTIL.randDir = function() {
+    return POM.UTIL.randUniqSetFromArray(POM.BASE.dirs.four, 1)[0];
+}
+

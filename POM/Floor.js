@@ -9,6 +9,7 @@ POM.Floor = function(params) {
     this.activeSheet = null;
     this.deadEnd = false;
     
+    this.GEng = POM.gameEngine;
     this.BR = POM.BASE.room;
     this.BD = POM.BASE.dirs;
     
@@ -61,7 +62,7 @@ POM.Floor.prototype.getNextRoom = function(params) {
     
     if (this.nodeMap[ndx][ndy].known == 'void') {
         this.nodeMap[ndx][ndy].generate({
-            sheet: this.activeSheet
+            sheet: this.GEng.player.journey,
         });
         this.renovate(this.nodeMap[ndx][ndy], mDir);
     }

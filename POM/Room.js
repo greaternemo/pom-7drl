@@ -34,6 +34,7 @@ POM.Room = function(params) {
         S: 'void',
         W: 'void',
     };
+    this.shape = null;
     
     this.init(params);
 }
@@ -70,11 +71,47 @@ POM.Room.prototype.generate = function(params) {
             }));
         }
     }
+    
+    // 80% chance to spawn mobs
+    if (POM.UTIL.rand(10) >= 2) {
+        // between 1-5 mobs
+        var rMobs = POM.UTIL.rand(5) + 1;
+        var mobLocs = POM.UTIL.randUniqSetFromArray(POM.BASE.room.spawns.mob, rMobs);
+        for (var mx = 0; mx < rMobs; mx += 1) {
+            POM.gameEngine.registerMob(new POM.Mob({
+                kind: 'zombie',
+                avatar: 'zombie',
+                roomX: this.nodeX,
+                roomY: this.nodeY,
+                locX: mobLocs[mx].x,
+                locY: mobLocs[mx].y,                
+            }))
+        }
+    }
+    
+    // 30% chance to spawn items
+    if (POM.UTIL.rand(10) >= 7) {
+        // between 1-2 items
+        var rItems = POM.UTIL.rand(2) + 1;
+        var itemLocs = POM.UTIL.randUniqSetFromArray(POM.BASE.room.spawns.item, rItems);
+        for (var ix = 0; ix < rItems; ix += 1) {
+            POM.gameEngine.registerItem(new POM.Item({
+                kind: 'orb',               
+                roomX: this.nodeX,
+                roomY: this.nodeY,
+                locX: itemLocs[ix].x,
+                locY: itemLocs[ix].y,
+            }));
+        }
+    }
+    
+    //this.decorate();
     this.updateSides();
 };
 
 POM.Room.prototype.updateSides = function() {
     var mySides = Object.keys(this.sides);
+    var myShape = '';
     for (var sk = 0; sk < mySides.length; sk += 1) {
         var rx = POM.BASE.room.sides[mySides[sk]].x;
         var ry = POM.BASE.room.sides[mySides[sk]].y;
@@ -85,27 +122,62 @@ POM.Room.prototype.updateSides = function() {
             switch (this.tileMap[rx][ry].kind) {
                 case 'hWall':
                     this.sides[mySides[sk]] = 'wall';
+                    myShape += 'n';
                     break;
                 case 'vWall':
                     this.sides[mySides[sk]] = 'wall';
+                    myShape += 'n';
                     break;
                 case 'hDoor':
                     this.sides[mySides[sk]] = 'door';
+                    myShape += 'd';
                     break;
                 case 'vDoor':
                     this.sides[mySides[sk]] = 'door';
+                    myShape += 'd';
                     break;
                 case 'oDoor':
                     this.sides[mySides[sk]] = 'open';
+                    myShape += 'd';
                     break;
             }
         }
     }
+    this.shape = POM.BASE.room.shapes.kinds[myShape];
 };
 
 
+POM.Room.prototype.decorate = function() {
+    
+};
 
+// checks the room's mobList to see if a specific tile has a mob on it, 
+// returns the mob if true, returns false if false.
+POM.Room.prototype.tileHasMob = function(tile) {
+    var hasmob = false;
+    var mcnt = 0;
+    for (mcnt = 0; mcnt < this.mobList.length; mcnt += 1) {
+        if (this.mobList[mcnt].locX == tile.locX &&
+            this.mobList[mcnt].locY == tile.locY) {
+            hasmob = this.mobList[mcnt];
+        }
+    }
+    return hasmob;
+}
 
+// checks the room's itemList to see if a specific tile has an item on it, 
+// returns the item if true, returns false if false.
+POM.Room.prototype.tileHasItem = function(tile) {
+    var hasitem = false;
+    var icnt = 0;
+    for (icnt = 0; icnt < this.itemList.length; icnt += 1) {
+        if (this.itemList[icnt].locX == tile.locX &&
+            this.itemList[icnt].locY == tile.locY) {
+            hasitem = this.itemList[icnt];
+        }
+    }
+    return hasitem;
+}
 
 
 
