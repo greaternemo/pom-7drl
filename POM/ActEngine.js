@@ -45,9 +45,9 @@ POM.ActEngine.prototype.controlPlayer = function(actor) {
                 this.GEng.gameWon = true;
             }
         }
-        else {
-            this.GEng.logMessage('You continue to dwell on the mysteries of the orb.');
-        }
+        //else {
+        //    this.GEng.logMessage('You continue to dwell on the mysteries of the orb.');
+        //}
         
         this.VEng.drawFrame();
         
@@ -235,6 +235,7 @@ POM.ActEngine.prototype.controlPlayer = function(actor) {
                             actor.locY += oldLoc.y;
                             break;
                         case "wall":
+                            /*
                             // you obviously don't move, durr
                             if (POM.UTIL.rand(10) >= 8) {
                                 GEng.logMessage("You almost walk through the wall, but not really. It hurts.");
@@ -243,6 +244,7 @@ POM.ActEngine.prototype.controlPlayer = function(actor) {
                             else {
                                 //GEng.logMessage("You fail to walk through the wall.");
                             }
+                            */
                             actor.locX += oldLoc.x;
                             actor.locY += oldLoc.y;
                     }
@@ -480,7 +482,7 @@ POM.ActEngine.prototype.tryToUse = function(actor, code) {
                     PC.waitLeft = 10;
                     //PC.waitLeft = 1;
                     aFlag === true;
-                    PC.mob.items.slotA = null;
+                    PC.mob.items[code] = null;
                 }
             }
             break;
