@@ -14,11 +14,12 @@ POM.Room = function(params) {
 	this.itemList = [];
 	this.mobList = [];
 
-	// state of the room for minimap and generation
-	// 'void' for a void room
-	// 'active' for the active room
-	// 'known' for an explored nonvoid room
-	// 'ready' for an unexplored nonvoid room
+	// state of the room for minimap
+	// for a void room, this.known should be 'void'
+	// for the active room, it should be 'active'
+	// for an explored nonvoid room it should be 'known'
+	// we're going to fuck with it for now for testing tho
+	// this.known = 'void'
 	this.known = 'void';
 
 	// I wish I had an enum for this.
@@ -44,12 +45,9 @@ POM.Room.prototype.init = function(params) {
 	this.tWidth = POM.BASE.room.tWidth;
 	this.tHeight = POM.BASE.room.tHeight;
 	this.sheet = POM.BASE.room.sheet;
-	this.originate({
-		sheet: POM.BASE.room.sheet,
-	});
 };
 
-POM.Room.prototype.originate = function(params) {
+POM.Room.prototype.generate = function(params) {
 	this.tileMap = [];
 	if (params) {
 		this.sheet = params.sheet;
@@ -74,29 +72,45 @@ POM.Room.prototype.originate = function(params) {
 		}
 	}
 
-
-};
-
-POM.Room.prototype.generate = function(params) {
-	if (params) {
-		this.sheet = params.sheet;
-		this.known = params.known;
-	}
-
 	this.updateSides();
 
-	if (this.known == 'ready') {
-		this.decorate();
-		this.populate();
+	this.decorate();
+	/*
+		// 80% chance to spawn mobs
+	if (POM.UTIL.rand(10) >= 2) {
+		// between 1-5 mobs
+		var rMobs = POM.UTIL.rand(5) + 1;
+		var mobLocs = POM.UTIL.randUniqSetFromArray(POM.BASE.room.spawns.mob, rMobs);
+		for (var mx = 0; mx < rMobs; mx += 1) {
+			POM.gameEngine.registerMob(new POM.Mob({
+				kind: 'shadow',
+				//avatar: 'shadow',
+				roomX: this.nodeX,
+				roomY: this.nodeY,
+				locX: mobLocs[mx].x,
+				locY: mobLocs[mx].y,
+			}))
+		}
 	}
 
+	// 20% chance to spawn items
+	if (POM.UTIL.rand(10) >= 8) {
+		// between 1-2 items
+		var rItems = POM.UTIL.rand(2) + 1;
+		var itemLocs = POM.UTIL.randUniqSetFromArray(POM.BASE.room.spawns.item, rItems);
+		for (var ix = 0; ix < rItems; ix += 1) {
+			POM.gameEngine.registerItem(new POM.Item({
+				kind: 'orb',
+				roomX: this.nodeX,
+				roomY: this.nodeY,
+				locX: itemLocs[ix].x,
+				locY: itemLocs[ix].y,
+			}));
+		}
+	}
+	*/
 };
 
-// WHAT DOES THIS EVEN DO
-// Ok, now I get it.
-// We run updateSides any time we update the room's tiles
-// After opening a door, updateSides updates this.sides to reflect that
-// After destroying a room, updateSides voids all the sides
 POM.Room.prototype.updateSides = function() {
 	var mySides = Object.keys(this.sides);
 	var myShape = '';
@@ -148,7 +162,6 @@ POM.Room.prototype.decorate = function() {
 		}
 		fmx++;
 	}
-	//console.log(fullMap);
 
 	var roomMap = [];
 	var rmx = 1;
@@ -161,7 +174,7 @@ POM.Room.prototype.decorate = function() {
 		}
 		rmx++;
 	}
-	//console.log('roommap: ' + roomMap.toString());
+	//console.log('roommap: ' + roomMap);
 
 	var pillars = POM.UTIL.roll("10d3");
 	var banned = ['1,6', '6,1', '11,6', '6,11'];
@@ -197,10 +210,10 @@ POM.Room.prototype.decorate = function() {
 			if (sry !== 0) {
 				sideRef[cellxy].N = POM.UTIL.enpair(srx, sry - 1);
 			}
-			if (srx != 12) {
+			if (srx !== 12) {
 				sideRef[cellxy].E = POM.UTIL.enpair(srx + 1, sry);
 			}
-			if (sry != 12) {
+			if (sry !== 12) {
 				sideRef[cellxy].S = POM.UTIL.enpair(srx, sry + 1);
 			}
 			if (srx !== 0) {
@@ -211,19 +224,32 @@ POM.Room.prototype.decorate = function() {
 		srx++;
 	}
 
-	// build a list of all the doors in the room
+	// generate a random door
 	var dirs = ['N', 'E', 'S', 'W'];
 	var openDoors = [];
 	var aDir = 0;
 
 	while (aDir < 4) {
-		if (this.sides[dirs[aDir]] != 'void') {
-			if (this.sides[dirs[aDir]] != 'wall') {
+		if (this.sides[dirs[aDir]] !== 'void') {
+			if (this.sides[dirs[aDir]] !== 'wall') {
 				openDoors.push(dirs[aDir]);
 			}
 		}
 		aDir++;
 	}
+	/*
+	while (openDoors.length === 0) {
+		aDir = 0;
+		while (aDir < 4) {
+			if (POM.UTIL.aCoin()) {
+				openDoors.push(dirs[aDir]);
+			}
+			aDir++;
+		}
+	}
+	//console.log(openDoors);
+	*/
+
 
 	var aDoor = null;
 	var finalDoors = [];
@@ -231,6 +257,8 @@ POM.Room.prototype.decorate = function() {
 		finalDoors.unshift(openDoors.pop());
 		aDoor = POM.UTIL.depair(origins[finalDoors[0]].xy);
 		finalDoors[0] = POM.UTIL.enpair(aDoor);
+		//cdd.fillStyle = 'red';
+		//cdd.fillRect(aDoor.x * 20, aDoor.y * 20, 20, 20);
 	}
 	//console.log('finaldoors: ' + finalDoors);
 
@@ -276,18 +304,16 @@ POM.Room.prototype.decorate = function() {
 	var tempMap = [];
 	var validMap = [];
 	var validDoors = [];
-	var validPlayer = [];
 	var curCell = null;
 	var sideCount = 0;
 	var sidexy = '';
-	var playerRadius = this.getPlayerRadius();
 
 	while (isValid === false) {
 		// This is where we actually roll to generate terrain
 		randMap = [];
 		while (randMap.length < pillars) {
 			pointStr = POM.UTIL.enpair(POM.UTIL.roll('1d11'), POM.UTIL.roll('1d11'));
-			if (banned.indexOf(pointStr) == -1 && playerRadius.indexOf(pointStr) == -1) {
+			if (banned.indexOf(pointStr) == -1) {
 				if (randMap.indexOf(pointStr) == -1) {
 					randMap.push(pointStr);
 				}
@@ -299,7 +325,6 @@ POM.Room.prototype.decorate = function() {
 		tempMap = [];
 		validMap = [];
 		validDoors = [];
-		validPlayer = [];
 		validMap.push('' + finalDoors[0]);
 		tempMap.push('' + finalDoors[0]);
 		validDoors.push('' + finalDoors[0]);
@@ -322,13 +347,10 @@ POM.Room.prototype.decorate = function() {
 								validMap.push('' + sidexy);
 								//console.log("tempMap: " + tempMap);
 								//console.log("validMap: " + validMap);
-								if (finalDoors.indexOf(sidexy) != -1) {
+								if (finalDoors.indexOf(sidexy) !== -1) {
 									validDoors.push(sidexy);
 									//console.log("validDoors: " + validDoors);
 								}
-								//if (playerRadius.indexOf(sidexy) != -1) {
-								//	validPlayer.push(sidexy);
-								//}
 							}
 						}
 					}
@@ -337,8 +359,7 @@ POM.Room.prototype.decorate = function() {
 			}
 		}
 		// final check, loop repeats and starts over if this fails
-		if (validDoors.length == finalDoors.length ) {
-			//&& validPlayer.length == playerRadius.length) {
+		if (validDoors.length == finalDoors.length) {
 			isValid = true;
 		}
 	}
@@ -358,19 +379,6 @@ POM.Room.prototype.decorate = function() {
 		mapCount++;
 	}
 
-	// then we're going to fill in any spaces that leave disconnected corners
-	// we may comment this out. (THIS WAS COMMENTED OUT)
-	// This needs to go in the loop, before validation.
-	/*
-	mapCount = 0;
-	curCell = null;
-	var curList = [];
-	var nesw = ['N', 'E', 'S', 'W'];
-	while (mapCount < validMap.length) {
-		
-	}
-	*/
-
 	// now we have to transfer all this to this.tileMap
 	var remap = 0;
 	var repoint = null;
@@ -379,7 +387,7 @@ POM.Room.prototype.decorate = function() {
 	// all these need to just be vWalls and we'll clean it up next
 	while (remap < randMap.length) {
 		repoint = POM.UTIL.depair(randMap[remap]);
-		this.tileMap[repoint.x][repoint.y].morphInto('vWall');
+		this.tileMap[repoint.x][repoint.y].kind = 'vWall';
 		remap++;
 	}
 
@@ -389,12 +397,12 @@ POM.Room.prototype.decorate = function() {
 	// update the outer walls to use the correct tiles
 	while (remap < outerMap.length) {
 		repoint = POM.UTIL.depair(outerMap[remap]);
-		if (repoint.y != 12) {
+		if (repoint.y !== 12) {
 			reunder = POM.UTIL.depair(sideRef[outerMap[remap]].S);
-			if (this.tileMap[reunder.x][reunder.y].kind != 'floor') {
-				this.tileMap[repoint.x][repoint.y].morphInto('vWall');
+			if (this.tileMap[reunder.x][reunder.y].kind !== 'floor') {
+				this.tileMap[reunder.x][reunder.y].kind = 'vWall';
 			} else {
-				this.tileMap[repoint.x][repoint.y].morphInto('hWall');
+				this.tileMap[reunder.x][reunder.y].kind = 'hWall';
 			}
 		}
 		remap++;
@@ -407,11 +415,11 @@ POM.Room.prototype.decorate = function() {
 	// update the inner walls to use the correct tiles
 	while (remap < randMap.length) {
 		repoint = POM.UTIL.depair(randMap[remap]);
-		reunder = POM.UTIL.depair(sideRef[randMap[remap]].S);
-		if (this.tileMap[reunder.x][reunder.y].kind != 'floor') {
-			this.tileMap[repoint.x][repoint.y].morphInto('vWall');
+		reunder = POM.UTIL.depair(sideRef[outerMap[remap]].S);
+		if (this.tileMap[reunder.x][reunder.y].kind !== 'floor') {
+			this.tileMap[reunder.x][reunder.y].kind = 'vWall';
 		} else {
-			this.tileMap[repoint.x][repoint.y].morphInto('hWall');
+			this.tileMap[reunder.x][reunder.y].kind = 'hWall';
 		}
 		remap++;
 	}
@@ -424,145 +432,6 @@ POM.Room.prototype.decorate = function() {
 		cdd.fillRect(pnt.x * 20, pnt.y * 20, 20, 20);
 	}
 	*/
-};
-
-// populate will randomly place our items and mobs, weighing the placement
-// based on how enclosed a space is.
-POM.Room.prototype.populate = function() {
-	// god I hope this works
-
-	// Okay, so first we're going to build an array of arrays.
-	// Each of the subarrays will contain the coordinate strings of
-	// each tile in the room with a number of adjacent non-floor spaces
-	// equal to the array's index.
-	var nonFloor = [
-		[],
-		[],
-		[],
-		[],
-		[],
-		[],
-		[],
-		[]
-	];
-	var tileCnt = 0;
-	var sideCnt = 0;
-	var wallCnt = 0;
-	var curTile = null;
-	var curTilexy = null;
-	var curSide = null;
-	var curSidexy = null;
-	var playerRadius = this.getPlayerRadius();
-
-	// Then we check every tile in the room's interior
-	while (tileCnt < POM.BASE.room.roomMap.length) {
-		sideCnt = 0;
-		wallCnt = 0;
-		curTile = '' + POM.BASE.room.roomMap[tileCnt];
-
-		// If this tile isn't in the banned list nor adjacent to the player
-		if (POM.BASE.room.banned.indexOf(curTile) == -1 && playerRadius.indexOf(curTile) == -1) {
-			curTilexy = POM.UTIL.depair(curTile);
-
-			// If this tile is a floor tile
-			if (this.tileMap[curTilexy.x][curTilexy.y].kind == 'floor') {
-
-				while (sideCnt < 8) {
-					curSide = '' + POM.BASE.dirs.sideRefs[curTile].eight[sideCnt];
-
-					// If the tile on this side isn't in the banned list
-					if (POM.BASE.room.banned.indexOf(curSide) == -1) {
-						curSidexy = POM.UTIL.depair(curSide);
-
-						// If the tile on this side is not a floor
-						if (this.tileMap[curSidexy.x][curSidexy.y].kind != 'floor') {
-							// Increment the wall count
-							wallCnt++;
-						}
-					}
-					sideCnt++;
-				}
-				// Push the tile into the array based on its number of adjacent walls.
-				// IN THEORY, any tile with 8 adjacent walls should be a wall, so we don't
-				// have an index 8 in the nonFloor array because we're throwing away walls.
-				nonFloor[wallCnt].push('' + curTile);
-			}
-		}
-		tileCnt++;
-	}
-
-	var numThis = POM.UTIL.roll('1d5');
-	var fullTiles = [];
-	var numSides = 0;
-	var thisLoc = null;
-	var thisLocxy = null;
-
-
-	// 80% chance to spawn mobs
-	if (POM.UTIL.roll('1d10') > 2) {
-		// between 1-5 mobs
-		numThis = POM.UTIL.roll('1d5');
-		fullTiles = [];
-		numSides = 0;
-		thisLoc = null;
-		thisLocxy = null;
-
-		while (numThis > 0) {
-			// Roll 1d3-1, that's the number of adjacent walls we'll look for
-			numSides = POM.UTIL.roll('1d3') - 1;
-			thisLoc = POM.UTIL.randUniqSetFromArray(nonFloor[numSides], 1)[0];
-			if (fullTiles.indexOf(thisLoc) == -1) {
-				fullTiles.push('' + thisLoc);
-				thisLocxy = POM.UTIL.depair(thisLoc);
-				POM.gameEngine.registerMob(new POM.Mob({
-					kind: 'shadow',
-					//avatar: 'shadow',
-					roomX: this.nodeX,
-					roomY: this.nodeY,
-					locX: thisLocxy.x,
-					locY: thisLocxy.y,
-				}));
-				// Only decrement numMobs after we add a mob.
-				numThis--;
-			}
-		}
-
-		// 20% chance to spawn items
-		if (POM.UTIL.roll('1d10') > 8) {
-			// between 1-2 items
-			numThis = POM.UTIL.aCoin() + 1;
-			fullTiles = [];
-			numSides = 7;
-			thisLoc = null;
-			thisLocxy = null;
-
-			while (numThis > 0) {
-				// Check 7 first, then 6, then *GASP* 5.
-				if (nonFloor[numSides].length > 0 && nonFloor[numSides].length >= numThis) {
-					while (numThis > 0) {
-						thisLoc = POM.UTIL.randUniqSetFromArray(nonFloor[numSides], 1)[0];
-						if (fullTiles.indexOf(thisLoc) == -1) {
-							fullTiles.push('' + thisLoc);
-							thisLocxy = POM.UTIL.depair(thisLoc);
-							POM.gameEngine.registerItem(new POM.Item({
-								kind: 'orb',
-								roomX: this.nodeX,
-								roomY: this.nodeY,
-								locX: thisLocxy.x,
-								locY: thisLocxy.y,
-							}));
-							numThis--;
-						}
-					}
-				} else {
-					// If there aren't enough tiles in the room for us to select from,
-					// decrement numSides and try again
-					numSides--;
-				}
-			}
-		}
-	}
-
 };
 
 // checks the room's mobList to see if a specific tile has a mob on it, 
@@ -591,38 +460,4 @@ POM.Room.prototype.tileHasItem = function(tile) {
 		}
 	}
 	return hasitem;
-};
-
-// does just what it says on the tin. accepts a tile.kind value and returns
-// a random tile in the room that is of that kind.
-POM.Room.prototype.randomTileOfKind = function(kind) {
-	var matches = [];
-	var temp = null;
-	var cnt = 0;
-	while (cnt < POM.BASE.room.roomMap.length) {
-		temp = POM.UTIL.depair(POM.BASE.room.roomMap[cnt]);
-		if (this.tileMap[temp.x][temp.y].kind == kind) {
-			matches.push('' + POM.BASE.room.roomMap[cnt]);
-		}
-		cnt++
-	}
-	return POM.UTIL.depair(POM.UTIL.randUniqSetFromArray(matches, 1)[0]);
-};
-
-// ugh
-POM.Room.prototype.getPlayerRadius = function() {
-	var sideCnt = 0;
-	var playerLoc = POM.UTIL.enpair(
-		POM.gameEngine.player.mob.locX,
-		POM.gameEngine.player.mob.locY
-	);
-	var playerRadius = [];
-
-	playerRadius.push('' + playerLoc);
-	while (sideCnt < 8) {
-		playerRadius.push('' + POM.BASE.dirs.sideRefs[playerLoc].eight[sideCnt]);
-		sideCnt++;
-	}
-	
-	return playerRadius;
 };

@@ -2,6 +2,7 @@
 
 POM.Player = function(params) {
     this.GEng = POM.gameEngine;
+    this.VEng = POM.viewEngine;
     
     this.mob = null;
     this.avatar = null;
@@ -10,8 +11,6 @@ POM.Player = function(params) {
     this.journey = null;
     this.prog = null;
     this.rings = {
-        //have: ['s1', 's2', 's3'],
-        //need: ['l1', 'l2', 'l3', 'l4', 'l5', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8'],
         have: [],
         need: ['s1', 's2', 's3', 'l1', 'l2', 'l3', 'l4', 'l5', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8'],
     };
@@ -23,14 +22,14 @@ POM.Player = function(params) {
 
 POM.Player.prototype.init = function(params) {
     // there should be nothing in params right now, ignore it
-    this.avatar = this.randomAvatar();
+    //this.avatar = this.randomAvatar();
     this.class = this.randomClass();
     
     this.journey = POM.BASE.player.journey[POM.BASE.player.start];
     
     this.mob = new POM.Mob({
         kind: 'player',
-        avatar: this.avatar,
+        //avatar: this.avatar,
         locX: POM.BASE.player.locX,
         locY: POM.BASE.player.locY,
         roomX: POM.BASE.player.roomX,
@@ -38,6 +37,7 @@ POM.Player.prototype.init = function(params) {
     });
     
     this.mob.class = this.class;
+    this.avatar = this.mob.avatar;
 };
 
 POM.Player.prototype.randomAvatar = function() {
@@ -55,6 +55,7 @@ POM.Player.prototype.registerMemory = function(memory) {
 POM.Player.prototype.getHit = function(damage) {
     (damage) ? (this.mob.getHit(damage)) : (this.mob.getHit());
     this.memory.checkMemory();
+    this.VEng.activeScene
 }
 
 POM.Player.prototype.getHealed = function(damage) {

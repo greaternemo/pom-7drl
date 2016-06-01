@@ -22,6 +22,13 @@ POM.Scene.prototype.registerZone = function(zone) {
     this.zones.push(zone);
 };
 
+POM.Scene.prototype.muss = function() {
+    var zcount = null;
+    for (zcount = 0; zcount < this.zones.length; zcount += 1) {
+        this.zones[zcount].dirty = 'filthy';
+    }
+};
+
 POM.Scene.prototype.composeYourself = function() {
     // for loop over zones
     // iterate over them and call composition methods by type
@@ -46,7 +53,7 @@ POM.Scene.prototype.composeYourself = function() {
     })
     */
     
-}
+};
 
 POM.Scene.prototype.compose = function(zone) {
     zone.checkLink();
@@ -66,7 +73,7 @@ POM.Scene.prototype.compose = function(zone) {
             break;
     }
     return outcome;
-}
+};
 
 POM.Scene.prototype.composePlayZone = function (zone) {
     var dx = null;

@@ -113,6 +113,8 @@ POM.GameEngine.prototype.destroyItem = function(item) {
     this.updateItemLists();
 };
 
+// destroy
+
 // updateItemLists clears and then regenerates all the local itemLists.
 // all items on the floor of the dungeon reside in the global itemList
 // and each room's local itemList holds the items on the floor of that room.

@@ -38,7 +38,7 @@ POM.PlayerMemory.prototype.enterRoom = function(params) {
 }
 
 POM.PlayerMemory.prototype.checkMemory = function(params) {
-    if (this.rooms.length > this.player.hpCur) {
+    while (this.rooms.length > this.player.hpCur) {
         // bye felicia
         var forgotten = this.rooms.pop();
         this.forget(forgotten);

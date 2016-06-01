@@ -27,8 +27,8 @@ POM.ActEngine.prototype.compel = function(actor) {
         case 'player':
             this.controlPlayer(actor);
             break;
-        case 'zombie':
-            this.controlZombie(actor);
+        case 'shadow':
+            this.controlShadow(actor);
             break;
     }
 };
@@ -189,12 +189,16 @@ POM.ActEngine.prototype.controlPlayer = function(actor) {
                                     vicious = true;
                                 }
                                 if (vicious === true) {
-                                    var broke = null;
-                                    //shame on you
+                                    // shame on you
+                                    var broke = 0;
+
+                                    // first, destroy all the orbs in the room.
+                                    // this needs to be rewritten to be item agnostic
                                     while (GEAR.itemList.length > 0) {
                                         GEng.destroyItem(GEAR.itemList[0]);
-                                        broke = true;
+                                        broke++;
                                     }
+                                    broke += actor.loseAll('orb');
                                     if (broke) {
                                         GEng.logMessage("Your viciousness shatters the orbs in the room!");
                                     }
@@ -265,8 +269,6 @@ POM.ActEngine.prototype.controlPlayer = function(actor) {
                 GEng.playerDeath();
             }
 
-
-
             if (mFlag === true) {
                 GEng.activeRoomState = 'filthy';
                 done = true;
@@ -299,8 +301,8 @@ POM.ActEngine.prototype.controlPlayer = function(actor) {
     }
 };
 
-POM.ActEngine.prototype.controlZombie = function(actor) {
-    // What does a zombie want? What does it do when unstimulated?
+POM.ActEngine.prototype.controlShadow = function(actor) {
+    // What does a shadow want? What does it do when unstimulated?
     
     // First, if you were doing something, keep doing that. 
     
@@ -319,6 +321,7 @@ POM.ActEngine.prototype.tryToWalk = function(actor, dir) {
     var GEng = POM.gameEngine;
     var GEAR = GEng.activeRoom;
     var GEAF = GEng.activeFloor;
+    var VEng = POM.viewEngine;
     var BR = POM.BASE.room;
     var BD = POM.BASE.dirs;
     var oldLoc = {x: 0, y: 0};
@@ -347,8 +350,13 @@ POM.ActEngine.prototype.tryToWalk = function(actor, dir) {
     // is there someone standing there? if yes, FIGHT THEM
     if (target) {
         GEng.logMessage('The ' + actor.kind + ' hits the ' + target.kind + '!');
-        target.getHit();
-        if (target.hpCur <= 0) {
+        if (target.kind == 'player') {
+            GEng.player.getHit(2);
+        }
+        else {
+            target.getHit(2);
+        }
+        if (target.hpCur <= 0 && target.kind != 'player') {
             GEng.logMessage('The ' + target.kind + ' dies!');
             GEng.destroyMob(target);
         }
@@ -482,7 +490,8 @@ POM.ActEngine.prototype.tryToUse = function(actor, code) {
                     PC.waitLeft = 10;
                     //PC.waitLeft = 1;
                     aFlag === true;
-                    PC.mob.items[code] = null;
+                    //PC.mob.items[code] = null;
+                    PC.mob.loseItem(code);
                 }
             }
             break;

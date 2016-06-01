@@ -37,6 +37,25 @@ POM.BASE = {
             S: 'N',
             W: 'E',
         },
+		
+		// An object containing coordinate pairs for tiles adjacent to a given tile.
+		sideRefs: {
+			/*
+			for example:
+			1,1: {
+				N: '1,0',
+				E: '2,1',
+				S: '1,2',
+				W: '0,1',
+				NE: '2,0',
+				SE: '2,2',
+				NW: '0,0',
+				SW: '0,2',
+				four: ['1,0', '2,1', '1,2', '0,1'],
+				eight: ['1,0', '2,1', '1,2', '0,1', '2,0', '2,2', '0,0', '0,2'],
+			}
+			*/
+		},
         
     },
     
@@ -52,9 +71,22 @@ POM.BASE = {
     },
     
     room: {
+        // An array of all coordinate pairs in a single room, as strings.
+        fullMap: [], // '0,0', '0,1', '0.2'... '12,12'
+		
+        // An array of all coordinate pairs in a room's interior, as strings.
+        roomMap: [], // '1,1', '1,2', '1,3'... '11,11'
+        
         sheet: null,
         tWidth: 13,
         tHeight: 13,
+		
+		// An array of tiles where walls cannot be placed during map decoration.
+		banned: ['1,6', '6,1', '11,6', '6,11'],
+		
+		// A simple array of coordinate pairs for all side doors.
+		doors: ['0,6', '6,0', '12,6', '6,12'],
+		
         sides: {
             N: {x:  6, y:  0},
             E: {x: 12, y:  6},
@@ -157,6 +189,7 @@ POM.BASE = {
             V: {},
             
         },
+        /*
          layout: [
             "vWall,vWall,vWall,vWall,vWall,vWall,vDoor,vWall,vWall,vWall,vWall,vWall,hWall",
             "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
@@ -172,7 +205,6 @@ POM.BASE = {
             "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
             "vWall,vWall,vWall,vWall,vWall,vWall,vDoor,vWall,vWall,vWall,vWall,vWall,hWall",
         ],
-        /*
        layout: [
             "vWall,vWall,vWall,vWall,vWall,vWall,vDoor,vWall,vWall,vWall,vWall,vWall,hWall",
             "hWall,floor,floor,floor,hWall,floor,floor,floor,hWall,floor,floor,floor,hWall",
@@ -188,6 +220,7 @@ POM.BASE = {
             "hWall,floor,floor,floor,hWall,floor,floor,floor,hWall,floor,floor,floor,hWall",
             "vWall,vWall,vWall,vWall,vWall,vWall,vDoor,vWall,vWall,vWall,vWall,vWall,hWall",
         ],
+        */
         layout: [
             "vWall,vWall,vWall,vWall,vWall,vWall,vDoor,vWall,vWall,vWall,vWall,vWall,hWall",
             "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
@@ -203,12 +236,12 @@ POM.BASE = {
             "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
             "vWall,vWall,vWall,vWall,vWall,vWall,vDoor,vWall,vWall,vWall,vWall,vWall,hWall",
         ],
-        */
     },
     
     colors: {
         // primarily for minimap drawing
         void: "black",
+		ready: "black",
         active: "white",
         known: "gray",
         wall: "black",
@@ -274,9 +307,11 @@ POM.BASE = {
                     "avatarC",
                     "avatarD",
                     "avatarE",
-                    "zombie",
-                    "spirit",
-                    "wraith"
+                    "shadowA",
+                    "shadowB",
+                    "shadowC",
+                    "shadowD",
+                    "shadowE"
                 ],
                 allMobs: null,
             },
@@ -404,6 +439,22 @@ POM.BASE = {
     },
     
     mobs: {
+        avatars: {
+            player: [
+                'avatarA',
+                'avatarB',
+                'avatarC',
+                'avatarD',
+                'avatarE'
+            ],
+            shadow: [
+                'shadowA',
+                'shadowB',
+                'shadowC',
+                'shadowD',
+                'shadowE'
+            ],
+        },
         player: {
             kind: 'avatarE',
             class: 'sinner',
@@ -418,10 +469,10 @@ POM.BASE = {
                 slotB: null,
             },
         },
-        zombie: {
-            kind: 'zombie',
-            class: 'zombie',
-            agent: 'zombie',
+        shadow: {
+            kind: 'shadow',
+            class: 'shadow',
+            agent: 'shadow',
             hpCur: 1,
             hpMax: 1,
             damage: 1,
@@ -669,47 +720,96 @@ POM.BASE.init = function() {
         }
     }
     
-}
-    
-/*    
-    
-    items: {
-        orb: {
-            kind: 'orb',
-            
-        }
-    },
-    
-    tiles: {
-        void: {
-            kind: 'void',
-            attrs: [],
-        },
-        wall: {
-            kind: 'wall',
-            attrs: [],
-        },
-        floor: {
-            kind: 'floor',
-            attrs: [
-                'walk',
-                'floor'
-            ]
-        },
-        cdoor: {
-            kind: 'cdoor',
-            attrs: [
-                'cdoor'
-            ]
-        },
-        odoor: {
-            kind: 'odoor',
-            attrs: [
-                'walk',
-                'odoor'
-            ]
-        },
-    },
-    
+    // build the room.fullMap array
+    var fullMap = [];
+	dx = 0;
+	dy = 0;
+	while (dx < 13) {
+		dy = 0;
+		while (dy < 13) {
+			POM.BASE.room.fullMap.push(POM.UTIL.enpair(dx, dy));
+			dy++
+		}
+		dx++;
+    }
 
-}*/
+    // build the room.roomMap array
+	var roomMap = [];
+	dx = 1;
+	dy = 1;
+	while (dx < 12) {
+		dy = 1;
+		while (dy < 12) {
+			POM.BASE.room.roomMap.push(POM.UTIL.enpair(dx, dy));
+			dy++;
+		}
+		dx++;
+	}
+	
+	// build the hell out of the dirs.sideRefs object
+	dx = 0;
+	dy = 0;
+	temp = null;
+	var cellxy = '';
+	while (dx < 13) {
+		// gotta reset this with each iteration
+		dy = 0;
+		while (dy < 13) {
+			cellxy = POM.UTIL.enpair(dx, dy);
+			POM.BASE.dirs.sideRefs[cellxy] = {
+				four: [],
+				eight: [],
+			};
+			if (dy !== 0) {
+				temp = POM.UTIL.enpair(dx, dy - 1);
+				POM.BASE.dirs.sideRefs[cellxy].N = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].four.push('' + temp);
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			if (dx != 12) {
+				temp = POM.UTIL.enpair(dx + 1, dy);
+				POM.BASE.dirs.sideRefs[cellxy].E = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].four.push('' + temp);
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			if (dy != 12) {
+				temp = POM.UTIL.enpair(dx, dy + 1);
+				POM.BASE.dirs.sideRefs[cellxy].S = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].four.push('' + temp);
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			if (dx !== 0) {
+				temp = POM.UTIL.enpair(dx - 1, dy);
+				POM.BASE.dirs.sideRefs[cellxy].W = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].four.push('' + temp);
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			if (dx != 12 && dy !== 0) {
+				temp = POM.UTIL.enpair(dx + 1, dy - 1);
+				POM.BASE.dirs.sideRefs[cellxy].NE = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			if (dx != 12 && dy != 12) {
+				temp = POM.UTIL.enpair(dx + 1, dy + 1);
+				POM.BASE.dirs.sideRefs[cellxy].SE = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			if (dx !== 0 && dy !== 0) {
+				temp = POM.UTIL.enpair(dx - 1, dy - 1);
+				POM.BASE.dirs.sideRefs[cellxy].NW = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			if (dx !== 0 && dy != 12) {
+				temp = POM.UTIL.enpair(dx - 1, dy + 1);
+				POM.BASE.dirs.sideRefs[cellxy].SW = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			
+			dy++;
+		}
+		dx++;
+	}
+
+}
+
+

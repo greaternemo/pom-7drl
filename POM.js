@@ -45,17 +45,30 @@ POM.init = function() {
 	);
     
     POM.gameEngine.registerActiveFloor(new POM.Floor());
-    
-    POM.gameEngine.activeFloor.nodeMap[2][2].generate();
+
     POM.gameEngine.registerActiveRoom(POM.gameEngine.activeFloor.nodeMap[2][2]);
 	
 	POM.gameEngine.registerPlayer();
 	//POM.gameEngine.player.mob.items.slotA = new POM.Item({ kind: 'orb'})
 	
+	// Now since we did THAT with the room generation, since the refactoring,
+	// we need to put the player in a random space or we run the risk of trying
+	// to spawn them on a wall tile. :/
+	POM.gameEngine.player.mob.moveTo(POM.gameEngine.activeRoom.randomTileOfKind('floor'));
+	
+	// nemo, get your fucking life together bro
+	// Right here, we generate the layout for the origin room,
+	// which we then immediately make active. We need to make it ready first.
+	POM.gameEngine.activeFloor.nodeMap[2][2].known = 'ready';
+    POM.gameEngine.activeFloor.nodeMap[2][2].generate();
+
+	// This is a quick and dirty fix for the origin room not being drawn on the map.
+	POM.gameEngine.activeFloor.nodeMap[2][2].known = 'known';
+	
 	/*
 	POM.gameEngine.registerMob(new POM.Mob({
-		kind: 'zombie',
-		avatar: 'zombie',
+		kind: 'shadow',
+		avatar: 'shadow',
 		roomX: 2,
 		roomY: 2,
 		locX: 11,
