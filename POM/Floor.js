@@ -9,6 +9,7 @@ POM.Floor = function(params) {
     this.activeSheet = null;
     this.deadEnd = false;
     
+    this.GEng = POM.gameEngine;
     this.BR = POM.BASE.room;
     this.BD = POM.BASE.dirs;
     
@@ -61,7 +62,8 @@ POM.Floor.prototype.getNextRoom = function(params) {
     
     if (this.nodeMap[ndx][ndy].known == 'void') {
         this.nodeMap[ndx][ndy].generate({
-            sheet: this.activeSheet
+            sheet: this.GEng.player.journey,
+            known: 'ready',
         });
         this.renovate(this.nodeMap[ndx][ndy], mDir);
     }
@@ -184,6 +186,15 @@ POM.Floor.prototype.renovate = function(room, dir) {
             }
         }
     }
+    
+    // we mark the room as ready so generation and updating the sides won't eat shit
+    //room.known = 'ready';
+    
+    // and then SHIT GETS REAL
+    // and by that I mean we randomly generate the room layout
+    //room.generate();
+    // duh the room is already generated.
+    room.updateSides();
 };
 
 

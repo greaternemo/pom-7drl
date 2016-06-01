@@ -21,18 +21,48 @@ POM.BASE = {
             W:  {x: -1, y:  0},
             NW: {x: -1, y: -1},
         },
+        octants: {
+            N:  {x:  1, y: -1},
+            NE: {x:  1, y: -1},
+            E:  {x:  1, y:  0},
+            SE: {x:  1, y:  1},
+            S:  {x:  0, y:  1},
+            SW: {x: -1, y:  1},
+            W:  {x: -1, y:  0},
+            NW: {x: -1, y: -1},
+        },
         pairs: {
             N: 'S',
             E: 'W',
             S: 'N',
             W: 'E',
         },
+		
+		// An object containing coordinate pairs for tiles adjacent to a given tile.
+		sideRefs: {
+			/*
+			for example:
+			1,1: {
+				N: '1,0',
+				E: '2,1',
+				S: '1,2',
+				W: '0,1',
+				NE: '2,0',
+				SE: '2,2',
+				NW: '0,0',
+				SW: '0,2',
+				four: ['1,0', '2,1', '1,2', '0,1'],
+				eight: ['1,0', '2,1', '1,2', '0,1', '2,0', '2,2', '0,0', '0,2'],
+			}
+			*/
+		},
         
     },
     
     actions: {
         KeyL: 'slotA',
-        //KeyR: 'slotB',
+        KeyR: 'slotB',
+        //KeyO: 'orb',
     },
     
     floor: {
@@ -41,9 +71,22 @@ POM.BASE = {
     },
     
     room: {
+        // An array of all coordinate pairs in a single room, as strings.
+        fullMap: [], // '0,0', '0,1', '0.2'... '12,12'
+		
+        // An array of all coordinate pairs in a room's interior, as strings.
+        roomMap: [], // '1,1', '1,2', '1,3'... '11,11'
+        
         sheet: null,
         tWidth: 13,
         tHeight: 13,
+		
+		// An array of tiles where walls cannot be placed during map decoration.
+		banned: ['1,6', '6,1', '11,6', '6,11'],
+		
+		// A simple array of coordinate pairs for all side doors.
+		doors: ['0,6', '6,0', '12,6', '6,12'],
+		
         sides: {
             N: {x:  6, y:  0},
             E: {x: 12, y:  6},
@@ -76,6 +119,108 @@ POM.BASE = {
                 door: 'vDoor',
             },
         },
+        // shoehorning this in for the basic setup
+        spawns: {
+            mob: [
+                {x:  2, y:  2},
+                {x:  2, y:  6},
+                {x:  2, y: 10},
+                {x:  6, y:  2},
+                {x: 10, y:  2},
+                {x: 10, y:  6},
+                {x: 10, y: 10}
+            ],
+            item: [
+                {x:  3, y:  3},
+                {x:  3, y:  9},
+                {x:  9, y:  3},
+                {x:  9, y:  9}
+            ],
+        },
+        shapes: {
+            // kinds are listed by doors, NESW, where n is no door and d is a door
+            kinds: {
+                nnnn: 'V',
+                nnnd: 'DW',
+                nndn: 'DS',
+                nndd: 'CSW',
+                ndnn: 'DE',
+                ndnd: 'HH',
+                nddn: 'CSE',
+                nddd: 'TN',
+                dnnn: 'DN',
+                dnnd: 'CNW',
+                dndn: 'HV',
+                dndd: 'DE',
+                ddnn: 'CNE',
+                ddnd: 'DS',
+                dddn: 'DW',
+                dddd: 'X',
+                
+            },
+            // 6 room shapes based on doors available.
+            
+            // X: all 4 doors. A cross.
+            X: {},
+           
+            // T: 3 doors, 1 wall, named by wall side. A T-junction.
+            TN: {},
+            TE: {},
+            TS: {},
+            TW: {},
+            
+            // H: 2 doors, 2 walls opposite each other. A hallway.
+            HH: {},
+            HV: {},
+            
+            // C: 2 doors with a wall opposite each. A corner.
+            CNE: {},
+            CSE: {},
+            CSW: {},
+            CNW: {},
+            
+            // D: 1 door with 3 walls. A dead end.
+            DN: {},
+            DE: {},
+            DS: {},
+            DW: {},
+            
+            // V: no doors. A void room.
+            V: {},
+            
+        },
+        /*
+         layout: [
+            "vWall,vWall,vWall,vWall,vWall,vWall,vDoor,vWall,vWall,vWall,vWall,vWall,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,hWall,floor,hWall,floor,hWall,floor,floor,floor,hWall",
+            "hWall,floor,floor,vWall,hWall,floor,floor,floor,vWall,hWall,floor,floor,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hDoor,floor,floor,hWall,floor,floor,floor,floor,floor,hWall,floor,floor,hDoor",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hWall,floor,floor,vWall,hWall,floor,floor,floor,vWall,hWall,floor,floor,hWall",
+            "hWall,floor,floor,floor,hWall,floor,hWall,floor,hWall,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "vWall,vWall,vWall,vWall,vWall,vWall,vDoor,vWall,vWall,vWall,vWall,vWall,hWall",
+        ],
+       layout: [
+            "vWall,vWall,vWall,vWall,vWall,vWall,vDoor,vWall,vWall,vWall,vWall,vWall,hWall",
+            "hWall,floor,floor,floor,hWall,floor,floor,floor,hWall,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,hWall,floor,floor,floor,hWall,floor,floor,floor,hWall",
+            "vWall,hWall,floor,vWall,vWall,hWall,floor,vWall,vWall,hWall,floor,vWall,hWall",
+            "hWall,floor,floor,floor,hWall,floor,floor,floor,hWall,floor,floor,floor,hWall",
+            "hDoor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hDoor",
+            "hWall,floor,floor,floor,hWall,floor,floor,floor,hWall,floor,floor,floor,hWall",
+            "vWall,hWall,floor,vWall,vWall,hWall,floor,vWall,vWall,hWall,floor,vWall,hWall",
+            "hWall,floor,floor,floor,hWall,floor,floor,floor,hWall,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
+            "hWall,floor,floor,floor,hWall,floor,floor,floor,hWall,floor,floor,floor,hWall",
+            "vWall,vWall,vWall,vWall,vWall,vWall,vDoor,vWall,vWall,vWall,vWall,vWall,hWall",
+        ],
+        */
         layout: [
             "vWall,vWall,vWall,vWall,vWall,vWall,vDoor,vWall,vWall,vWall,vWall,vWall,hWall",
             "hWall,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,floor,hWall",
@@ -96,6 +241,7 @@ POM.BASE = {
     colors: {
         // primarily for minimap drawing
         void: "black",
+		ready: "black",
         active: "white",
         known: "gray",
         wall: "black",
@@ -109,7 +255,10 @@ POM.BASE = {
     },
     
     views: {
-        intv: (1000/15),
+        intv: {
+            spooky: (1000/15),
+            ded: (1000),
+        },
         fader: 0.125,
         main: {
             canvas: null,
@@ -117,6 +266,19 @@ POM.BASE = {
         work: {
             canvas: null,
         }
+    },
+    
+    tiles: {
+        // we can make smaller base layout maps if we have glyph conversion
+        kinds: {
+            'w': 'hWall',
+            'W': 'vWall',
+            '.': 'floor',
+            'd': 'hDoor',
+            'D': 'vDoor',
+            '#': 'oDoor',
+        },
+        
     },
             
     sheets: {
@@ -145,9 +307,11 @@ POM.BASE = {
                     "avatarC",
                     "avatarD",
                     "avatarE",
-                    "zombie",
-                    "spirit",
-                    "wraith"
+                    "shadowA",
+                    "shadowB",
+                    "shadowC",
+                    "shadowD",
+                    "shadowE"
                 ],
                 allMobs: null,
             },
@@ -200,44 +364,44 @@ POM.BASE = {
                     ascent: ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8'],
                 },
                 sphere: {
-                    s1: {w: 25, h: 11, x: 0, y: 0},
-                    s2: {w: 13, h: 21, x: 0, y: 11},
-                    s3: {w: 15, h: 20, x: 13, y: 11},
+                    s1: {w: 25, h: 11, x:   0, y:  0},
+                    s2: {w: 13, h: 21, x:   0, y: 11},
+                    s3: {w: 15, h: 20, x:  13, y: 11},
                 },
                 limbo: {
-                    l1: {w: 45, h: 23, x: 28, y: 0},
-                    l2: {w: 19, h: 35, x: 0, y: 32},
-                    l3: {w: 35, h: 27, x: 73, y: 0},
-                    l4: {w: 35, h: 28, x: 42, y: 27},
-                    l5: {w: 23, h: 37, x: 19, y: 32},
+                    l1: {w: 45, h: 23, x:  28, y:  0},
+                    l2: {w: 19, h: 35, x:   0, y: 32},
+                    l3: {w: 35, h: 27, x:  73, y:  0},
+                    l4: {w: 35, h: 28, x:  42, y: 27},
+                    l5: {w: 23, h: 37, x:  19, y: 32},
                 },
                 ascent: {
-                    a1: {w: 47, h: 21, x: 108, y: 0},
-                    a2: {w: 40, h: 42, x: 159, y: 0},
-                    a3: {w: 20, h: 44, x: 96, y: 42},
+                    a1: {w: 47, h: 21, x: 108, y:  0},
+                    a2: {w: 40, h: 42, x: 159, y:  0},
+                    a3: {w: 20, h: 44, x:  96, y: 42},
                     a4: {w: 33, h: 37, x: 135, y: 42},
                     a5: {w: 51, h: 21, x: 108, y: 21},
                     a6: {w: 31, h: 31, x: 168, y: 42},
                     a7: {w: 19, h: 47, x: 116, y: 42},
-                    a8: {w: 37, h: 34, x: 59, y: 55},
+                    a8: {w: 37, h: 34, x:  59, y: 55},
                 },
                 locs: {
-                    s1: {w: 25, h: 11, x: 0, y: 0},
-                    s2: {w: 13, h: 21, x: 0, y: 11},
-                    s3: {w: 15, h: 20, x: 13, y: 11},
-                    l1: {w: 45, h: 23, x: 28, y: 0},
-                    l2: {w: 19, h: 35, x: 0, y: 32},
-                    l3: {w: 35, h: 27, x: 73, y: 0},
-                    l4: {w: 35, h: 28, x: 42, y: 27},
-                    l5: {w: 23, h: 37, x: 19, y: 32},
-                    a1: {w: 47, h: 21, x: 108, y: 0},
-                    a2: {w: 40, h: 42, x: 159, y: 0},
-                    a3: {w: 20, h: 44, x: 96, y: 42},
+                    s1: {w: 25, h: 11, x:   0, y:  0},
+                    s2: {w: 13, h: 21, x:   0, y: 11},
+                    s3: {w: 15, h: 20, x:  13, y: 11},
+                    l1: {w: 45, h: 23, x:  28, y:  0},
+                    l2: {w: 19, h: 35, x:   0, y: 32},
+                    l3: {w: 35, h: 27, x:  73, y:  0},
+                    l4: {w: 35, h: 28, x:  42, y: 27},
+                    l5: {w: 23, h: 37, x:  19, y: 32},
+                    a1: {w: 47, h: 21, x: 108, y:  0},
+                    a2: {w: 40, h: 42, x: 159, y:  0},
+                    a3: {w: 20, h: 44, x:  96, y: 42},
                     a4: {w: 33, h: 37, x: 135, y: 42},
                     a5: {w: 51, h: 21, x: 108, y: 21},
                     a6: {w: 31, h: 31, x: 168, y: 42},
                     a7: {w: 19, h: 47, x: 116, y: 42},
-                    a8: {w: 37, h: 34, x: 59, y: 55},
+                    a8: {w: 37, h: 34, x:  59, y: 55},
                 },
             },
             
@@ -275,11 +439,28 @@ POM.BASE = {
     },
     
     mobs: {
+        avatars: {
+            player: [
+                'avatarA',
+                'avatarB',
+                'avatarC',
+                'avatarD',
+                'avatarE'
+            ],
+            shadow: [
+                'shadowA',
+                'shadowB',
+                'shadowC',
+                'shadowD',
+                'shadowE'
+            ],
+        },
         player: {
             kind: 'avatarE',
             class: 'sinner',
             agent: 'player',
-            health: 5,
+            hpCur: 5,
+            hpMax: 5,
             damage: 1,
             turnWait: 0,
             turnSpeed: 15,
@@ -288,14 +469,15 @@ POM.BASE = {
                 slotB: null,
             },
         },
-        zombie: {
-            kind: 'zombie',
-            class: 'zombie',
-            agent: 'zombie',
-            health: 1,
+        shadow: {
+            kind: 'shadow',
+            class: 'shadow',
+            agent: 'shadow',
+            hpCur: 1,
+            hpMax: 1,
             damage: 1,
             turnWait: 0,
-            turnSpeed: 15,
+            turnSpeed: 10,
             items: {
                 slotA: null,
                 slotB: 'unable',
@@ -404,26 +586,26 @@ POM.BASE = {
                 },
                 rings: {
                     //sphere: {
-                        s1: {x: 66, y: 88},
-                        s2: {x: 62, y: 98},
-                        s3: {x: 79, y: 99},
+                        s1: {x:  66, y:  88},
+                        s2: {x:  62, y:  98},
+                        s3: {x:  79, y:  99},
                     //},
                     //limbo: {
-                        l1: {x: 58, y: 120},
-                        l2: {x: 99, y: 91},
-                        l3: {x: 80, y: 63},
-                        l4: {x: 42, y: 63},
-                        l5: {x: 38, y: 92},
+                        l1: {x:  58, y: 120},
+                        l2: {x:  99, y:  91},
+                        l3: {x:  80, y:  63},
+                        l4: {x:  42, y:  63},
+                        l5: {x:  38, y:  92},
                     //},
                     //ascent: {
-                        a1: {x: 50, y: 39},
-                        a2: {x: 97, y: 44},
-                        a3: {x: 122, y: 83},
-                        a4: {x: 99, y: 125},
-                        a5: {x: 51, y: 146},
-                        s6: {x: 22, y: 127},
-                        a7: {x: 14, y: 84},
-                        a8: {x: 18, y: 50},
+                        a1: {x:  50, y:  39},
+                        a2: {x:  97, y:  44},
+                        a3: {x: 122, y:  83},
+                        a4: {x:  99, y: 125},
+                        a5: {x:  51, y: 146},
+                        a6: {x:  22, y: 127},
+                        a7: {x:  14, y:  84},
+                        a8: {x:  18, y:  50},
                     //},
                 },
             },
@@ -538,47 +720,96 @@ POM.BASE.init = function() {
         }
     }
     
-}
-    
-/*    
-    
-    items: {
-        orb: {
-            kind: 'orb',
-            
-        }
-    },
-    
-    tiles: {
-        void: {
-            kind: 'void',
-            attrs: [],
-        },
-        wall: {
-            kind: 'wall',
-            attrs: [],
-        },
-        floor: {
-            kind: 'floor',
-            attrs: [
-                'walk',
-                'floor'
-            ]
-        },
-        cdoor: {
-            kind: 'cdoor',
-            attrs: [
-                'cdoor'
-            ]
-        },
-        odoor: {
-            kind: 'odoor',
-            attrs: [
-                'walk',
-                'odoor'
-            ]
-        },
-    },
-    
+    // build the room.fullMap array
+    var fullMap = [];
+	dx = 0;
+	dy = 0;
+	while (dx < 13) {
+		dy = 0;
+		while (dy < 13) {
+			POM.BASE.room.fullMap.push(POM.UTIL.enpair(dx, dy));
+			dy++
+		}
+		dx++;
+    }
 
-}*/
+    // build the room.roomMap array
+	var roomMap = [];
+	dx = 1;
+	dy = 1;
+	while (dx < 12) {
+		dy = 1;
+		while (dy < 12) {
+			POM.BASE.room.roomMap.push(POM.UTIL.enpair(dx, dy));
+			dy++;
+		}
+		dx++;
+	}
+	
+	// build the hell out of the dirs.sideRefs object
+	dx = 0;
+	dy = 0;
+	temp = null;
+	var cellxy = '';
+	while (dx < 13) {
+		// gotta reset this with each iteration
+		dy = 0;
+		while (dy < 13) {
+			cellxy = POM.UTIL.enpair(dx, dy);
+			POM.BASE.dirs.sideRefs[cellxy] = {
+				four: [],
+				eight: [],
+			};
+			if (dy !== 0) {
+				temp = POM.UTIL.enpair(dx, dy - 1);
+				POM.BASE.dirs.sideRefs[cellxy].N = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].four.push('' + temp);
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			if (dx != 12) {
+				temp = POM.UTIL.enpair(dx + 1, dy);
+				POM.BASE.dirs.sideRefs[cellxy].E = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].four.push('' + temp);
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			if (dy != 12) {
+				temp = POM.UTIL.enpair(dx, dy + 1);
+				POM.BASE.dirs.sideRefs[cellxy].S = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].four.push('' + temp);
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			if (dx !== 0) {
+				temp = POM.UTIL.enpair(dx - 1, dy);
+				POM.BASE.dirs.sideRefs[cellxy].W = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].four.push('' + temp);
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			if (dx != 12 && dy !== 0) {
+				temp = POM.UTIL.enpair(dx + 1, dy - 1);
+				POM.BASE.dirs.sideRefs[cellxy].NE = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			if (dx != 12 && dy != 12) {
+				temp = POM.UTIL.enpair(dx + 1, dy + 1);
+				POM.BASE.dirs.sideRefs[cellxy].SE = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			if (dx !== 0 && dy !== 0) {
+				temp = POM.UTIL.enpair(dx - 1, dy - 1);
+				POM.BASE.dirs.sideRefs[cellxy].NW = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			if (dx !== 0 && dy != 12) {
+				temp = POM.UTIL.enpair(dx - 1, dy + 1);
+				POM.BASE.dirs.sideRefs[cellxy].SW = '' + temp;
+				POM.BASE.dirs.sideRefs[cellxy].eight.push('' + temp);
+			}
+			
+			dy++;
+		}
+		dx++;
+	}
+
+}
+
+

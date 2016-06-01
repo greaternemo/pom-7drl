@@ -23,7 +23,7 @@ POM.ViewEngine = function(params) {
 
 POM.ViewEngine.prototype.init = function(params) {
     // this.activeScene = params.activeScene;
-    this.intv = POM.BASE.views.intv;
+    this.intv = 0;
     this.fader = POM.BASE.views.fader;
     this.alpha = 0;
 };
@@ -69,12 +69,13 @@ POM.ViewEngine.prototype.composeActiveScene = function() {
 
 POM.ViewEngine.prototype.drawFrame = function() {
     // y'all gonna wait
-    this.GEng.stop();
+    //this.GEng.stop();
     this.composeActiveScene();
     
     // gimme that spooky fade, fam
     this.alpha = 0;
     this.vMainDD.globalAlpha = this.alpha;
+    this.intv = POM.BASE.views.intv.spooky;
         
     this.fadeIn();
 };
@@ -95,4 +96,17 @@ POM.ViewEngine.prototype.fadeIn = function() {
     } else {
         this.repeat = setTimeout(this.fadeIn.bind(this), this.intv);
     }
+};
+
+POM.ViewEngine.prototype.animateDeath = function() {
+    this.alpha = 0
+    this.vMainDD.globalAlpha = this.alpha;
+    this.intv = POM.BASE.views.intv.ded;
+    
+    this.vWorkDD.fillStyle = "black";
+    this.vWorkDD.fillRect(
+		0, 0, this.vWork.width, this.vWork.height
+	);
+    
+    this.fadeIn();
 };

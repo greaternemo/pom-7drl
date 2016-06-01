@@ -22,6 +22,13 @@ POM.Scene.prototype.registerZone = function(zone) {
     this.zones.push(zone);
 };
 
+POM.Scene.prototype.muss = function() {
+    var zcount = null;
+    for (zcount = 0; zcount < this.zones.length; zcount += 1) {
+        this.zones[zcount].dirty = 'filthy';
+    }
+};
+
 POM.Scene.prototype.composeYourself = function() {
     // for loop over zones
     // iterate over them and call composition methods by type
@@ -46,7 +53,7 @@ POM.Scene.prototype.composeYourself = function() {
     })
     */
     
-}
+};
 
 POM.Scene.prototype.compose = function(zone) {
     zone.checkLink();
@@ -66,7 +73,7 @@ POM.Scene.prototype.compose = function(zone) {
             break;
     }
     return outcome;
-}
+};
 
 POM.Scene.prototype.composePlayZone = function (zone) {
     var dx = null;
@@ -97,7 +104,7 @@ POM.Scene.prototype.composePlayZone = function (zone) {
                     zone.sWidth, zone.sHeight);
             }
         }
-        /*
+
         iList = aRoom.itemList;
         if (iList.length > 0) {
             for (dz = 0; dz < iList.length; dz += 1) {
@@ -111,7 +118,7 @@ POM.Scene.prototype.composePlayZone = function (zone) {
                 zone.sWidth, zone.sHeight);
             }
         }
-        */
+
         mList = aRoom.mobList;
         if (mList.length > 0) {
             for (dz = 0; dz < mList.length; dz += 1) {
@@ -281,13 +288,13 @@ POM.Scene.prototype.composeStatZone = function(zone) {
         }
         
         // draw the player's health
-        if (PC.mob.health > 0) {
+        if (PC.mob.hpCur > 0) {
             for (dx = 0; dx < BZSPO.memory.locs.length; dx += 1) {
-                if ((PC.mob.health - 1) < dx) {
+                if ((PC.mob.hpCur - 1) < dx) {
                     // this one is hurt
                     zone.dd.fillStyle = POM.BASE.colors.hurt;
                 }
-                else if (PC.mob.health >= dx) {
+                else if (PC.mob.hpCur >= dx) {
                     if ((PC.memory.rooms.length - 1) < dx) {
                         zone.dd.fillStyle = POM.BASE.colors.fine;
                     }

@@ -33,11 +33,15 @@ POM.PlayerMemory.prototype.enterRoom = function(params) {
     if (mIndex != 'found') {
         // if we don't remember it, we know it now and forget one if necessary
         this.rooms.unshift(this.floor.nodeMap[nodeX][nodeY]);
-        if (this.rooms.length > this.player.health) {
-            // bye felicia
-            var forgotten = this.rooms.pop();
-            this.forget(forgotten);
-        }
+        this.checkMemory();
+    }
+}
+
+POM.PlayerMemory.prototype.checkMemory = function(params) {
+    while (this.rooms.length > this.player.hpCur) {
+        // bye felicia
+        var forgotten = this.rooms.pop();
+        this.forget(forgotten);
     }
 }
 
@@ -48,6 +52,15 @@ POM.PlayerMemory.prototype.forget = function(room) {
     if (this.floor.deadEnd == this.floor.nodeMap[fx][fy]) {
         this.floor.deadEnd = false;
     }
+    
+    // any mobs or items in the room are despawned
+    while (room.mobList.length > 0) {
+        POM.gameEngine.destroyMob(room.mobList[0]);
+    }
+    while (room.itemList.length > 0) {
+        POM.gameEngine.destroyItem(room.itemList[0]);
+    }
+    
     this.floor.nodeMap[fx][fy] = new POM.Room({
         nodeX: fx,
         nodeY: fy,

@@ -2,7 +2,7 @@
 
 POM.UTIL = {};
 
-// returns an integer between 0 and max, exclusing max
+// returns an integer between 0 and max, excluding max
 // this is good for arrays because you can just use array.length for max
 POM.UTIL.rand = function(max) {
     return Math.floor(Math.random() * max);
@@ -61,4 +61,48 @@ POM.UTIL.zero = function(numArray) {
         eA = 0;
     })
 };
+
+POM.UTIL.randDir = function() {
+    return POM.UTIL.randUniqSetFromArray(POM.BASE.dirs.four, 1)[0];
+}
+
+POM.UTIL.aDie = function(size) {
+	return Math.floor(Math.random() * size) + 1;
+}
+
+POM.UTIL.aCoin = function() {
+	return POM.UTIL.aDie(2) - 1;
+}
+
+POM.UTIL.roll = function(dice) {
+	var input = dice.split('d');
+	var vals = {};
+	vals.quantity = parseInt(input[0], 10);
+	vals.size = parseInt(input[1], 10);
+
+	var total = 0;
+	while (vals.quantity > 0) {
+		total += POM.UTIL.aDie(vals.size);
+		vals.quantity--;
+	}
+	return total;
+}
+
+POM.UTIL.enpair = function(valx, valy) {
+	var output = '';
+	if (valx.hasOwnProperty('x')) {
+		output += valx.x + ',' + valx.y;
+	} else {
+		output += valx + ',' + valy;
+	}
+	return output;
+}
+
+POM.UTIL.depair = function(val) {
+	var output = {};
+	var pieces = val.split(',');
+	output.x = parseInt(pieces[0], 10);
+	output.y = parseInt(pieces[1], 10);
+	return output;
+}
 
