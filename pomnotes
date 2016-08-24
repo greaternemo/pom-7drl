@@ -1,4 +1,4 @@
-Shit that still needs to be done:
+    Shit that still needs to be done:
 
 Rework the game state data from the POM.Player class into the GameEngine or something
 Rework all the player handling logic from the ActEngine into generic mob handling logic
@@ -109,3 +109,216 @@ POM
         
     BASE
     Util
+	
+Dependencies & Inheritance revamp brainstorm:
+
+entities, components, systems
+an entity just holds components
+components hold data
+systems handle entities based on game events and components
+
+name scheme:
+eName: engines
+sName: systems
+rName: registries
+cName: components
+tName: things?
+
+POM
+POM.Lib
+POM.Thing
+
+POM.eReg
+POM.eGame
+POM.eView
+POM.eAct
+
+POM.sFactory
+POM.sMapGen
+POM.sInit
+POM.sScheduler
+POM.sRegistry
+POM.sRand
+POM.sMath?
+POM.sCombat
+POM.sLog
+POM.sMiniMap
+POM.sText
+POM.sStats
+POM.sJourney
+POM.sMemory
+POM.sDraw
+POM.sItem
+POM.sInput
+POM.sAgent
+
+POM.cLoc
+POM.cSize
+POM.cOrig?
+POM.cFx
+POM.cHp
+POM.cDmg
+POM.cKind
+POM.cAttr
+POM.cSpr
+POM.cImg
+POM.cSpd
+POM.cPass
+POM.cPrep
+POM.cPlayer
+POM.cHands
+POM.cInv
+POM.cInfo
+POM.cZone
+POM.cLayer
+
+What registries do I need?
+All registries
+All entities
+All zones in POM.eView (gameplay)
+All nodes/zones in gameplay (floor, minimap, stats, text)
+All nodes/zones in floor (5x5 rooms)
+All nodes/zones in minimap (6x6 doors, 5x5 rooms)
+All nodes/zones in stats (health, understanding, items)
+All nodes in text (5x??? chars)
+All nodes in all 5 rooms ()
+
+Program flow:
+Init game
+Generate lib entries
+Generate engines
+Populate game engine
+
+
+// simple location in x,y
+loc {
+	x: '',
+	y: '',
+}
+
+// width and height in px
+size {
+	h: '',
+	w: '',
+}
+
+// source image for anything drawing sprites
+src {
+	img: '',
+}
+
+// the understood type of a given thing
+kind {
+	kind: '',
+}
+
+// the agent controlling a given thing
+agent {
+	agent: '',
+}
+
+// current and max health of a thing
+hp {
+	cur: '',
+	max: '',
+}
+
+// speed and wait duration of a thing in the scheduler
+spd {
+	spd: '',
+	wait: '',
+}
+
+// current status effects
+fx {
+	fx: '',
+}
+
+// damage dealt on attack
+// can be expanded later to include armor, evasion
+dmg {
+	dmg: '',
+}
+
+// orthogonal groups by name
+layer {
+	isLayer,
+	kind,
+}
+
+// generic player progress tracking data
+progress {
+	prog: '',
+}
+
+spritemap {
+	kind,
+	size,
+	
+}
+
+graphic {
+	size
+}
+
+// A system is a collection of behavior
+// A zone is a collection of nodes
+// A node is a defined area on a zone and contains layers
+// A layer is an orthogonal group of things
+// A thing is a container of raw data. Systems, grids, nodes, and layers are also things.
+
+view: zone {
+
+	// formerly scenes
+	nodes: {
+		zone: {
+		
+			// formerly zones
+			nodes: {
+				zone: {
+				
+					// formerly rooms
+					nodes: {
+						zone: {
+						
+							// formerly tiles
+							nodes: {
+								zone: {
+								
+								
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+	layers: {},
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

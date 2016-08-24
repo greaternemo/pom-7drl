@@ -1,0 +1,275 @@
+Process Flow
+
+NO FUNCTION THAT IS NOT A UTILITY SHOULD DEPEND ON THE RETURN
+VALUE OF ANOTHER FUNCTION. 
+EACH FUNCTION SHOULD BE PASSED THE DATA IT NEEDS TO MANIPULATE, 
+WHICH SHOULD AFFECT THE DATA STRUCTURES IN A WAY THAT OTHER 
+FUNCTIONS CAN VERIFY OR FURTHER MANIPULATE.
+
+make all
+    make engines
+    make scheduler
+    make game
+        make player
+        register player mob
+        add player to scheduler
+    make world
+        make floor?
+        make room
+            gen room
+            place player
+            gen mobs
+                register mobs
+                add mobs to scheduler
+            gen items
+                register items
+                
+    make view
+        make log
+            mark log dirty
+        make minimap
+            mark minimap dirty
+        make stats
+            mark stats dirty
+        make room map
+            mark room map dirty
+draw all
+    check view for dirty zones
+        draw each to buffer
+            set alpha for buffer redraw
+            redraw each frame with adjusted alpha to animate
+    
+    
+start loop
+
+How does a turn happen:
+
+Decide which action to take
+If action requires confirmation, ask for confirmation
+If asking player, log the question
+If logging, redraw
+Wait for confirmation input
+Process confirmation input
+Log that input
+If logging, redraw
+Do the action
+If action has a message, log it
+If logging, redraw 
+
+
+
+What can a mob do?
+Try to move
+    Move to adjacent tile
+        Pick up item on tile 
+    Move through doorway to adjacent room 
+    Interact with adjacent thing 
+        Fight adjacent mob 
+        Open adjacent door 
+Try to use an item
+    Confirm item use 
+        Confirmed 
+        Declined 
+    Select item target 
+        Confirmed 
+        Declined 
+Try to use a skill 
+    Select target
+Wait a turn 
+
+
+Which discrete processes can we outline?
+What exceptions do we need to handle to those basic processes? 
+
+
+
+What things do we need, and what do all of those things need?
+
+Game Engine:
+    Game state
+    Player progression
+    Main loop
+    
+
+View Engine:
+    View zones
+    Canvases
+    Sprites
+    
+Action Engine:
+    sAgent - Agents
+    sInput - Input handling
+    sCombat - Combat
+    sMove - Movement
+    sScheduler - Turn scheduler
+
+Registry Engine:
+    Registries
+    Signaling?
+    Thing creation
+    Thing deletion
+
+World Engine:
+    Floor
+    Rooms
+    Terrain
+    Mobs
+    Items
+
+Which engines care about what components?
+
+POM.cLoc    World, Action, View
+POM.cSize   View
+POM.cOrigin View
+POM.cFx     Action
+POM.cAgent  Action
+POM.cHp     Action
+POM.cDmg    Action
+POM.cKind   World, Action, View
+POM.cAttr   Any
+POM.cSpr    View
+POM.cImg    View
+POM.cSpd    Action
+POM.cPass   Action
+POM.cMove   Action
+POM.cPrep   World, Action, View?
+POM.cKnown  World, View
+POM.cSides  World, View
+POM.cPlayer Game, Action
+POM.cMob    Action
+POM.cHands  Action
+POM.cInv    Action
+POM.cInfo   ?
+POM.cZone   ?
+POM.cLayer  ?
+POM.cNodes  ?
+
+Which things have what components?
+
+Mob:
+id
+cKind
+cHands/cInv
+cAttr
+cAgent
+cHp
+cFx
+cSpd
+cDmg
+cMove
+cSpr
+
+Item:
+id
+cKind
+cAttr
+cSpr
+
+Tile:
+id
+cKind
+cLoc
+cAttr
+cSpr
+cLoc
+cMob
+cInv
+
+Room:
+id
+cLoc
+cKind?
+cPrep
+cKnown
+cSides
+cNodes
+
+Floor
+id
+cSize
+cOrigin
+cNodes
+
+MiniTile
+id
+cLoc
+cSize
+cOrigin
+cKind
+cKnown
+
+TextArea
+id
+cLog
+cSize
+cOrigin
+cNodes
+
+StatArea
+id
+cSize
+cOrigin
+cNodes
+
+Should I just create a Service class?
+UGH I don't want to wire up any weird callbacks for it to work
+Engines MIGHT need to send signals
+Engines will contain instances of their constituent services
+Engines will call those services to manipulate game data
+Services will need to send signals on the fly to ensure things
+are processed correctly. 
+I don't want to wire ALL the services together, that's what I'm
+trying to avoid in decoupling all this. 
+I want each of the services to be able to call signal() in the
+middle of a method to process things like mob death.
+Would I need to send a signal to process mob death if I just had
+the mob management service handle that?
+sCombat would call kill() for the dying mob as part of conflict
+resolution lol
+The kill() function would call the purge() function from the
+registry management system. 
+
+What would I need signaling for?
+SERIOUS decoupling that doesn't involve the services linking to
+each other.
+
+I can use events for signaling, but I need an intermediary to
+interpret them.
+I may need a signal engine for this.
+The signal engine would be instantiated.
+Then the init function would take a list of objects from the Lib
+Each object would contain the event name, the function to be called
+when that event is triggered?
+Then it would iterate over each object and create the event as a
+property of the signal engine with the given name, then the signal
+engine would be given an event listener for each event. Additional
+events could be added just by adding a new entry in the Lib. 
+This would let me get around the dependencies. Some systems might
+need to call other systems mid-function rather than having them all
+called from a given engine. I can do that without creating a
+dependency by having the method trigger the event, which the
+signal engine will catch and reroute properly. I THINK that should
+work. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

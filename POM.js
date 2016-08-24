@@ -119,3 +119,152 @@ POM.init = function() {
     POM.viewEngine.drawFrame();
 	POM.gameEngine.start();
 };
+
+// New experimental tech goes down here
+/*
+var POM = {
+	L: null,
+	eA: null,
+	eG: null,
+	eR: null,
+	eV: null,
+	eW: null,
+}
+
+// Utility function definitions.
+// I don't know why I didn't do this in the global
+// scope in the first place. 
+
+// Returns an int between 0 and max-1
+function randInt(max) {
+	return Math.floor(Math.random() * max);
+}
+
+function randIntSet(max, total) {
+	if (total < 1) {
+		console.log('Failed randIntSet: total < 1');
+		return [];
+	}
+	var finalSet = [];
+	while (finalSet.length < total) {
+		finalSet.push(rand(max));
+	}
+	return finalSet;
+}
+
+function randUniqIntSet(max, total) {
+	if (total >= max) {
+		console.log('Failed randUniqIntSet: total >= max');
+		return [];
+	}
+	var finalSet = [];
+	var rNum = null;
+	while (finalSet.length < total) {
+		rNum = randInt(max);
+		if (finalSet.indexOf(rNum) == -1) {
+			finalSet.push(rNum);
+		}
+	}
+	return finalSet;
+}
+
+function randIndex(arr) {
+	return randInt(arr.length);
+}
+
+function randIndexSet(arr, total) {
+	return randIntSet(arr.length, total);
+}
+
+function randUniqIndexSet(arr, total) {
+	return randUniqIntSet(arr.length, total);
+}
+
+function randElem(arr) {
+	return arr[randIndex(arr)];
+}
+
+function randElemSet(arr, total) {
+	var tempSet = randIndexSet(arr, total);
+	var finalSet = [];
+	while (tempSet.length > 0) {
+		finalSet.push(arr[tempSet.shift()]);
+	}
+	return finalSet;
+}
+
+function randUniqElemSet(arr, total) {
+	var tempSet = randUniqIndexSet(arr, total);
+	var finalSet = [];
+	while (tempSet.length > 0) {
+		finalSet.push(arr[tempSet.shift()]);
+	}
+	return finalSet;
+}
+
+function randDir(num) {
+	if (num == 8) {
+		return randElem(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']);
+	} else {
+		return randElem(['N', 'E', 'S', 'W']);
+	}
+}
+
+function aDie(sides) {
+	return Math.floor(Math.random() * sides) + 1;
+}
+
+function d2()  { return aDie(2);  }
+function d4()  { return aDie(4);  }
+function d6()  { return aDie(6);  }
+function d8()  { return aDie(8);  }
+function d10() { return aDie(10); }
+function d12() { return aDie(12); }
+function d20() { return aDie(20); }
+
+function enpair(vx, vy) {
+	var output = '';
+	if (vx.hasOwnProperty('x')) {
+		output += vx.x + ',' + vx.y;
+	} else {
+		output += vx + ',' + vy;
+	}
+	return output;
+}
+
+function depair(xy) {
+	var output = {};
+	var pieces = xy.split(',');
+	output.x = parseInt(pieces[0], 10);
+	output.y = parseInt(pieces[1], 10);
+	return output;
+}
+
+
+// End utility function definitions.
+
+POM.L = new POM.Lib;
+POM.eA = new POM.eAct;
+POM.eG = new POM.eGame;
+POM.eR = new POM.eReg;
+POM.eV = new POM.eView;
+POM.eW = new POM.eWorld;
+
+POM.build = function(args) {
+	return POM.SFactory.build(args);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
