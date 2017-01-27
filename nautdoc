@@ -1,0 +1,3 @@
+Framework: responsible for common action processing
+Engine: responsible for a specific loop of game logic
+System: responsible for carrying out specialized tasks

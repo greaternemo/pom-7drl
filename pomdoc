@@ -1,0 +1,95 @@
+pom.html
+POM.js - main game file, framework init
+Nautilus.js - framework core, init logic
+
+Registries contain keyed information?
+
+Engine: STOP USING ENGINE, JUST STOP
+Too much conflicting information.
+
+Let's talk about... usage frequency.
+What will we use the most?
+What will we interact with the most?
+
+We have the part where everything originates,
+from which we initialize everything on load.
+We have the application, which contains all
+the process logic and IO systems and really
+everything that we stand up in the init step.
+In the application, we have the core logic,
+which arranges and conducts everything in
+the application.
+The core logic manages the game and all the
+related systems and processes.
+At the bottom, really, is the game itself.
+The game is not the loop, the loop is just
+one part of the game as a whole within the
+application.
+
+At the top is our application.
+The init logic in the application fires up all of our
+basic systems, and each layer builds on the last.
+Next come the most basic of systems:
+data registry,
+signal router,
+object factory,
+application manager.
+Off of those are built the core interface systems:
+view manager,
+input manager.
+Then we have the different bits accessible from within
+the application:
+menu logic,
+game logic.
+The game proper is a construct that resides within the
+application and contains all the systems that come
+together to make "the game" as it's played:
+game manager
+action manager
+world manager
+
+
+
+
+
+
+Nautilus
+    Core
+    Engine
+        Action
+          carries out mob actions
+        Audio
+          handles music and sound effects
+        Game
+          handles the main game loop and progress
+        Input
+          parses input into signals
+        View
+          handles drawing to screen
+        World
+          handles upkeep of the game world
+    Ops
+        Director
+          manages game scenes
+        Registry
+          holds basically all game objects
+        Router
+          parses and routes signals
+        Factory
+          universal object creator
+    System
+        Agent
+        Collision
+        Combat
+        Draw
+        Item
+        Progress
+        MapGen
+        MiniMap
+        Move
+        Scheduler
+    Util
+        Log
+        Math
+        Rand
+        
