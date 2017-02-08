@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<style>
+    body {
+        background-color: black;
+    }
+    .view {
+        padding: 0;
+        margin: auto;
+        display: block;
+    }
+    .scene {
+        display: none;
+    }
+</style>
+
+<head>
+</head>
+
+<body onload="POM.init()">
+    
+    <!-- all the images I need 
+    <img id="envSphere" class="zone" src="POM/img/pom_env_sphere.png" width="192" height="32">
+    <img id="envLimbo" class="zone" src="POM/img/pom_env_limbo.png" width="192" height="32">
+    <img id="envAscent" class="zone" src="POM/img/pom_env_ascent.png" width="192" height="32">
+    <img id="playMobs" class="zone" src="POM/img/pom_play_mobs.png" width="320" height="32">
+    <img id="playItems" class="zone" src="POM/img/currentsheet.png" width="256" height="32">
+    <img id="fontFace" class="zone" src="POM/img/pom_font_mono.png" width="416" height="64">
+    <img id="statBase" class="zone" src="POM/img/pom_stat_base.png" width="160" height="256">
+    <img id="progRings" class="zone" src="POM/img/pom_prog_rings.png" width="199" height="89">
+    -->
+
+    <!-- main and work canvases -->
+    <canvas id="mainView" class="view" width="576" height="576"></canvas>
+    <canvas id="bufferView" class="scene" width="576" height="576"></canvas>
+    
+    
+    <!-- title scene 
+    <canvas id="initZone" class="zone" width="576" height="576"></canvas>
+    <canvas id="loadZone" class="zone" width="576" height="576"></canvas>
+    -->
+    
+    <!-- gameplay scene 
+    <canvas id="playZone" class="zone" width="416" height="416"></canvas>
+    <canvas id="textZone" class="zone" width="576" height="160"></canvas>
+    <canvas id="miniZone" class="zone" width="160" height="160"></canvas>
+    <canvas id="statZone" class="zone" width="160" height="256"></canvas>
+    -->
+
+</body>
+    <!--
+    Load up Nautilus first for POM dependencies.
+    In the stable release, this shoud be a minified complete
+    version of Nautilus, so one script instead of many.
+    -->
+    <script src="NAUTILUS.js"></script>
+    <script src="NAUTILUS/App.js"></script>
+    <script src="NAUTILUS/App/Router.js"></script>
+    <script src="NAUTILUS/App/Util.js"></script>
+    <script src="NAUTILUS/Data.js"></script>
+    <script src="NAUTILUS/Data/Factory.js"></script>
+    <script src="NAUTILUS/Data/Registry.js"></script>
+    <!--
+    <script src="NAUTILUS/Game.js"></script>
+    <script src="NAUTILUS/Game/Action.js"></script>
+    <script src="NAUTILUS/Game/World.js"></script>
+    -->
+    <script src="NAUTILUS/Ui.js"></script>
+    <script src="NAUTILUS/Ui/Input.js"></script>
+    <script src="NAUTILUS/Ui/View.js"></script>
+    
+    <script src="POM.js"></script>
+</html>

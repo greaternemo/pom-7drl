@@ -4,8 +4,40 @@
 // FIRE IT UP
 
 var POM = {
-    // POM stuff?
+    // Let's predefine all the attrs for the app
+    appDirector: null,
+    appRouter: null,
+    
+    // ???
+    
+    
 };
+
+// Define anything else you need to use in POM.init()
+// somewhere ABOVE POM.init()
+
+POM.appDirector = new POM.Director();
+POM.appRouter = new NAUTILUS.App.Router();
+
+// Providing a global interface to the appRouter so anything
+// can just call the function without pointing directly at POM
+
+function signal(params) {
+    return POM.appRouter.reroute(params);
+}
+
+
+// Moving on.
+
+POM.init = function () {
+    // Start at the top.
+    
+    
+}
+
+
+
+
 
 /*
 
