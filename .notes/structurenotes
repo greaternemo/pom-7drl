@@ -1,3 +1,11 @@
 data-driven programming:
 define selection criteria for the data you want,
 then perform operations on it 
+
+Any core structure objects will be created and be assigned
+to attributes of larger constructs.
+Any state data required by those constructs internally will
+be assigned to attributes of those constructs as well.
+The data registry will hold the data for and references to
+ALL DATA EXCEPT:
+The greater application (aka the top level namespace)

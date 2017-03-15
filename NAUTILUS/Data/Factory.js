@@ -17,20 +17,23 @@ NAUTILUS.Data.Factory = function (params) {
     this.prefabs = null;
 };
 
-NAUTILUS.Data.Factory.prototype.loadPrefabs = function(params) {
+NAUTILUS.Data.Factory.prototype.loadPrefabs = function (params) {
     // This needs to...
     // ... populate this.prefabs from params.
     // Welp.
     this.prefabs = params;
 };
 
-NAUTILUS.Data.Factory.prototype.makeThing = function(params) {
+NAUTILUS.Data.Factory.prototype.makeThing = function (whichPrefab) {
     // This needs to...
     // create a new Thing,
-    let newThing = {};
+    let newThing = {
+        eid: null
+    };
     
     // populate its parts based on a template,
-    // TODO
+    
+    
     
     // update the values of the new Thing based on prefab
     // TODO
@@ -39,3 +42,17 @@ NAUTILUS.Data.Factory.prototype.makeThing = function(params) {
     return newThing;
 };
 
+// This grafts Parts onto a Thing
+NAUTILUS.Data.Factory.prototype.graft = function (params) {
+    
+};
+
+
+
+/*
+*
+*
+* Courtesy Spaces
+*
+*
+*/

@@ -3,8 +3,8 @@
 
 NAUTILUS.Data.Registry = function (params) {
     // hurk
-    this.counter = 0;
-    this.primeRegistry = {};
+    this.primeSet = new Set();
+    this.primeMap = new Map();
     this.primeSchema = null;
 }
 
@@ -12,16 +12,19 @@ NAUTILUS.Data.Registry = function (params) {
 
 NAUTILUS.Data.Registry.prototype.importSchema = function (params) {
     // Import a schema for understanding all these registries
-    // and referencing them properly
+    // and referencing them properly.
+    // The primeSchema should be imported from the prefab data
+    // as part of the app init process.
     this.primeSchema = params;
     
 };
 
-NAUTILUS.Data.Registry.prototype.registerThing = function (params) {
-    // Just add the Thing to the registry.
-    // Or to the right registry?
-    // Fuck.
-    // TODO
+NAUTILUS.Data.Registry.prototype.registerThing = function (newent) {
+    let newid = this.generateUeid();
+    newent.eid = newid;
+    this.primeSet.add(newid);
+    this.primeMap.set(newid, newent);
+    
 };
 
 NAUTILUS.Data.Registry.prototype.registerCluster = function (params) {
@@ -29,3 +32,30 @@ NAUTILUS.Data.Registry.prototype.registerCluster = function (params) {
     // Iterate over each Thing in the cluster
     // TODO
 };
+
+// Generates a string containing a unique 10 digit id
+NAUTILUS.Data.Registry.prototype.generateUeid = function () {
+    let temp;
+    let newid;
+    while (true) {
+        temp = '' + Math.random();
+        newid = temp.substring(2, 12);
+        if (this.primeSet.has(newid)) {
+            // NOPE
+        }
+        else {
+            // we good
+            return newid;
+        }
+    }
+};
+
+
+
+/*
+*
+*
+* Courtesy Spaces
+*
+*
+*/

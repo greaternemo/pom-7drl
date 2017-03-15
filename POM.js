@@ -22,10 +22,16 @@ POM.appRouter = new NAUTILUS.App.Router();
 // Providing a global interface to the appRouter so anything
 // can just call the function without pointing directly at POM
 
-function signal(params) {
+function SIG(params) {
     return POM.appRouter.reroute(params);
 }
 
+// Providing a global interface to the data registry to aid
+// access to entity data
+
+function ENT(eid) {
+    return POM.appDirector.sData.registry.primeMap.get(eid);
+}
 
 // Moving on.
 
