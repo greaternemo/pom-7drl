@@ -1,4 +1,4 @@
-// NAUTILUS.Ui.View
+// NAUTILUS.Ui.Output.View
 // Onscreen visual output
 
 /*

@@ -265,7 +265,14 @@ dependency by having the method trigger the event, which the
 signal engine will catch and reroute properly. I THINK that should
 work. 
 
-
+Resolving a single turn - MtG-style?
+Upkeep phase: 
+    Checking flags, incrementing/decrementing counters?
+    Apply recurring effects, healing, damage
+Main phase: 
+    Decide which action to take
+End phase: 
+    Expire effects? 
 
 
 

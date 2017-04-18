@@ -34,6 +34,7 @@ NAUTILUS.App.Util.prototype.d10 = function () { return this.aDie(10); };
 NAUTILUS.App.Util.prototype.d12 = function () { return this.aDie(12); };
 NAUTILUS.App.Util.prototype.d20 = function () { return this.aDie(20); };
 
+// Constructs a random number <len> digits long, returns a string
 NAUTILUS.App.Util.prototype.genNum = function (len) {
     let nStr = '';
     let nCnt = 0;
