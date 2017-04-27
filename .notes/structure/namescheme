@@ -1,0 +1,47 @@
+POM/NAUTILUS Name Scheme & Term Glossary
+
+NAUTILUS: game development framework, generic
+POM: Persistence of Memory, a game, specific
+
+App: Top level namespace, the app is the instance of the program as it runs. 
+The app contains the engine, which contains the game. 
+
+Prefab: Namespace for 'prefabs', which includes 'models' and 'parts'. 
+
+Model: Namespace for 'models', which are blueprints for complex game objects. 
+Models are composed of 'parts'. 
+EXAMPLE: "MODEL_MOB"
+
+Part: Namespace for 'parts', which are the components that comprise complex 
+objects. Parts contain attributes, which are raw data values and references. 
+EXAMPLE: "PART_RENDERABLE"
+
+Spec: Namespace for 'specs', which are blueprints for specific game objects. 
+A spec includes 1) a model and 2) the base data for that model's parts to 
+create an instance of a specific type of game object. 
+EXAMPLE: "SPEC_MOB_GOBLIN"
+
+Thing: Namespace for 'things' (?), which are individual complex game objects. 
+A thing is created via a factory using a spec as the blueprint. After creation
+a thing is referenced by its unique ID. 
+
+Scene: A thing that serves as a tree containing all the elements of a UI 
+presented to the player. An app will very likely have multiple scenes to 
+handle menus, gameplay, etcetera.
+
+Director: Namespace for 'directors', which are complex constructs used to 
+manage scenes and the systems that provide the interfaces by which the player 
+interacts with those scenes. 
+
+Proc: Namespace for 'procs', which are custom process scripts used for game 
+logic and bits of behavior. 
+
+
+
+/*
+*
+*
+* Courtesy Spaces
+*
+*
+*/

@@ -5,8 +5,25 @@
 
 */
 
-NAUTILUS.Ui.View = function (params) {
+NAUTILUS.Ui.Output.View = function (params) {
     // Open your eyes
+    
+    // This will be passed in to become the loopProc of our loop.
+    // This will eventually need to be defined when the View
+    // object is instantiated, so this is a placeholder value.
+    this.drawProc = function () {};
+    
+    // This will be passed in to become the loopDelay of our loop.
+    // 30 FPS is a fine default.
+    this.drawDelay = (1000/30)
+    
+    // Our draw loop, obv
+    this.drawLoop = new NAUTILUS.App.Loop(this.drawProc, this.drawDelay);
+    
+    // BE CAREFUL WHEN YOU ENGAGE THE LOOP THAT DRAWS THE DANG SCREEN
+    // This may well need to be called somewhere else. Probably.
+    this.drawLoop.engage();
+    
 }
 
 /*
