@@ -10,3 +10,15 @@ The data registry will hold the data for and references to
 ALL DATA EXCEPT:
 The greater application (aka the top level namespace)
 
+Should all locations be unique?
+Based on the Space/Location model you've put together,
+I don't see how they couldn't be unique?
+
+REMEMBER REMEMBER REMEMBER
+The relationship between physical locations REQUIRES
+all location abstractions to be unique because together,
+all location abstractions will form a contiguous map of
+multiple dimensions. Stop thinking in terms of traditional
+concepts like "floors" and "rooms". Those are details, not
+constructs in and of themselves.
+Fucking brilliant, mate. 

@@ -25,17 +25,16 @@ NAUTILUS.Data.Factory.prototype.loadPrefabs = function (params) {
 };
 
 NAUTILUS.Data.Factory.prototype.makeThing = function (whichPrefab) {
-    // This needs to...
-    // create a new Thing,
-    let newThing = {
-        eid: null
-    };
+    // A 'Thing' is your basic 'entity' or 'game object'. 
+    // 'Thing' isn't an intrinsic type, just a container with 
+    // some minimal identity data.
+    let newThing = new Map();
     
-    // populate its parts based on a template,
+    // Populate the new Thing's parts based on a template
+    // TODO
     
     
-    
-    // update the values of the new Thing based on prefab
+    // Update the values of the new Thing based on a prefab
     // TODO
     
     // and return the new Thing.

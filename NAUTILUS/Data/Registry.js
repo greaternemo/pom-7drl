@@ -2,27 +2,28 @@
 // Universal game object database
 
 NAUTILUS.Data.Registry = function (params) {
-    // hurk
-    this.primeSet = new Set();
+    // Pretty sure the primeMap actually makes the primeSet redundant
+    // this.primeSet = new Set();
     this.primeMap = new Map();
     this.primeSchema = null;
 }
 
-// NAUTILUS.Data.Registry.prototype.
+/*
+NAUTILUS.Data.Registry.prototype.
+*/
 
-NAUTILUS.Data.Registry.prototype.importSchema = function (params) {
+NAUTILUS.Data.Registry.prototype.importSchema = function (pSchema) {
     // Import a schema for understanding all these registries
     // and referencing them properly.
     // The primeSchema should be imported from the prefab data
     // as part of the app init process.
-    this.primeSchema = params;
+    this.primeSchema = pSchema;
     
 };
 
 NAUTILUS.Data.Registry.prototype.registerThing = function (newent) {
     let newid = this.generateUeid();
     newent.eid = newid;
-    this.primeSet.add(newid);
     this.primeMap.set(newid, newent);
     
 };
@@ -40,13 +41,27 @@ NAUTILUS.Data.Registry.prototype.generateUeid = function () {
     while (true) {
         temp = '' + Math.random();
         newid = temp.substring(2, 12);
-        if (this.primeSet.has(newid)) {
+        // Must be unique, must be 10 characters long
+        if (this.primeMap.has(newid) || newid.length !== 10) {
             // NOPE
         }
         else {
             // we good
             return newid;
         }
+    }
+};
+
+// Recursively locates the relevant Thing at the end of a chain of pointers
+NAUTILUS.Data.Registry.prototype.chaseDown = function (eid) {
+    let myTarget = this.primeMap.get(eid);
+    // If the primeMap has() the value of myTarget, it means the value of
+    // eid is the key to another value, confirming that eid is a pointer.
+    // In that case, we need to go deeper.
+    if (this.primeMap.has(myTarget)) {
+        return this.chaseDown(myTarget);
+    } else {
+        return myTarget;
     }
 };
 

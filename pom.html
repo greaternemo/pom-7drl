@@ -29,11 +29,11 @@
     <img id="statBase" class="zone" src="POM/img/pom_stat_base.png" width="160" height="256">
     <img id="progRings" class="zone" src="POM/img/pom_prog_rings.png" width="199" height="89">
     -->
-    <img id="baseSheet" class="zone" src="IMG/basesheet32.png" width="128" height="64">
+    <img id="baseSheet" src="IMG/basesheet32.png" width="128" height="64">
 
     <!-- main and work canvases -->
-    <canvas id="mainView" class="view" width="576" height="576"></canvas>
-    <canvas id="bufferView" class="scene" width="576" height="576"></canvas>
+    <canvas id="main_view"  width="576" height="576"></canvas>
+    <canvas id="buffer"     width="576" height="576"></canvas>
     
     
     <!-- title scene 
@@ -41,12 +41,13 @@
     <canvas id="loadZone" class="zone" width="576" height="576"></canvas>
     -->
     
-    <!-- gameplay scene 
-    <canvas id="playZone" class="zone" width="416" height="416"></canvas>
-    <canvas id="textZone" class="zone" width="576" height="160"></canvas>
-    <canvas id="miniZone" class="zone" width="160" height="160"></canvas>
-    <canvas id="statZone" class="zone" width="160" height="256"></canvas>
-    -->
+    <!-- gameplay scene -->
+    <canvas id="gameplay"           width="576" height="576"></canvas>
+    <canvas id="gameplay_world"     width="416" height="416"></canvas>
+    <canvas id="gameplay_log"       width="576" height="160"></canvas>
+    <canvas id="gameplay_minimap"   width="160" height="160"></canvas>
+    <canvas id="gameplay_stats"     width="160" height="256"></canvas>
+    <!-- -->
 
 </body>
     <!--

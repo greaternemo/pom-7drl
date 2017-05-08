@@ -7,13 +7,13 @@ POM.Director = function (params) {
     // Right now, all I'm sure of is that the Director
     // manages Scenes.
     
-    // These will just be 
-    this.curScene = null;
-    this.allScenes = null;
+    // These will be defined as constants, commenting these out.
+    // this.curScene = null;
+    // this.allScenes = null;
     
-    this.sData = null;
-    this.sUi = null;
-    this.sGame = null;
+    this.sysData = {};
+    this.sysUi = {};
+    this.sysGame = {};
     
     this.init(params);
 };
@@ -23,15 +23,22 @@ POM.Director.prototype.
 */
 
 POM.Director.prototype.init = function (params) {
-    // make shit happen
-    this.sData.registry = new NAUTILUS.Data.Registry();
-    this.sData.factory = new NAUTILUS.Data.Factory();
+    // From the top:
+    // First we create the registry.
+    this.sysData.registry = new NAUTILUS.Data.Registry();
     
-    this.sUi.input = new NAUTILUS.Ui.Input();
-    this.sUi.output = new NAUTILUS.Ui.Output();
+    // Here's the deal: nothing else that we declare in this init function
+    // should require data from the registry to complete their own init
+    // functions. Creating the new registry does not intrinsically populate
+    // its primeSchema or primeMap with meaningful content. 
+    
+    this.sysData.factory = new NAUTILUS.Data.Factory();
+    
+    this.sysUi.input = new NAUTILUS.Ui.Input();
+    this.sysUi.output = new NAUTILUS.Ui.Output();
     
     // fix this
-    this.sGame.asdf = null;
+    this.sysGame.ghjk = null;
 };
 
 POM.Director.prototype.asdf;
